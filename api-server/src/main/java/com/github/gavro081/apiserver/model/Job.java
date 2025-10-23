@@ -29,19 +29,15 @@ public class Job {
     @NotNull(message = "Programming language is required")
     private ProgrammingLanguage language;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String code;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String stdin;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String stdout;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String stderr;
 
