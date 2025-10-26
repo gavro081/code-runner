@@ -1,5 +1,7 @@
 package com.github.gavro081.apiserver.model;
 
+import com.github.gavro081.common.model.JobStatus;
+import com.github.gavro081.common.model.ProgrammingLanguage;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -10,10 +12,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "jobs")
-@Getter
-@Setter
+@Getter @Setter
 @Builder
-@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Job {

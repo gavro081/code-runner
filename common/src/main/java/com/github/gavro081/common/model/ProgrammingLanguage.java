@@ -1,4 +1,4 @@
-package com.github.gavro081.apiserver.model;
+package com.github.gavro081.common.model;
 
 public enum ProgrammingLanguage {
     python

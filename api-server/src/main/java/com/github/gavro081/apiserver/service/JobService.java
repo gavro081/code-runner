@@ -2,19 +2,24 @@ package com.github.gavro081.apiserver.service;
 
 import com.github.gavro081.apiserver.dto.CodeSubmissionDto;
 import com.github.gavro081.apiserver.model.Job;
-import com.github.gavro081.apiserver.model.JobStatus;
-import com.github.gavro081.apiserver.model.ProgrammingLanguage;
 import com.github.gavro081.apiserver.repository.JobRepository;
+import com.github.gavro081.common.config.RabbitMQConfig;
+import com.github.gavro081.common.events.JobCreatedEvent;
+import com.github.gavro081.common.model.JobStatus;
+import com.github.gavro081.common.model.ProgrammingLanguage;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
 public class JobService {
-    private JobRepository jobRepository;
+    private final JobRepository jobRepository;
+    private final RabbitTemplate rabbitTemplate;
 
-    public JobService(JobRepository jobRepository) {
+    public JobService(JobRepository jobRepository, RabbitTemplate rabbitTemplate) {
         this.jobRepository = jobRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public UUID createJob(CodeSubmissionDto codeSubmissionDto){
@@ -27,6 +32,13 @@ public class JobService {
                 .build();
 
         Job savedJob = jobRepository.save(job);
+
+        JobCreatedEvent event = JobCreatedEvent.builder()
+                .code(code)
+                .language(language)
+                .build();
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "job.created", event);
         return savedJob.getId();
     }
 }

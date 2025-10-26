@@ -1,6 +1,6 @@
 package com.github.gavro081.apiserver.dto;
 
-import com.github.gavro081.apiserver.model.ProgrammingLanguage;
+import com.github.gavro081.common.model.ProgrammingLanguage;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
