@@ -17,8 +17,8 @@ const getKeyboardShortcut = () => {
 };
 
 export const CodeIde = () => {
-	const [lang, setLang] = useState<LanguageName>("javascript");
-	const [code, setCode] = useState(languages[lang].boilerplate);
+	const [language, setLanguage] = useState<LanguageName>("javascript");
+	const [code, setCode] = useState(languages[language].boilerplate);
 	const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
 	const [effectiveTheme, setEffectiveTheme] = useState(tokyoNightDay);
 
@@ -27,6 +27,28 @@ export const CodeIde = () => {
 	}, [themeMode]);
 
 	const isDark = effectiveTheme === tokyoNight;
+
+	const onChange = useCallback((value: string) => {
+		setCode(value);
+	}, []);
+
+	const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const newLang = e.target.value as LanguageName;
+		setLanguage(newLang);
+		setCode(languages[newLang].boilerplate);
+	};
+
+	const handleSubmit = useCallback(async () => {
+		const response = await fetch("http://localhost:8080/api/submit", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ code, language }),
+		});
+		const result = await response.json();
+		console.log("Response:", result);
+	}, [code]);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -38,22 +60,7 @@ export const CodeIde = () => {
 
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
-	}, []);
-
-	const onChange = useCallback((value: string) => {
-		setCode(value);
-	}, []);
-
-	const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const newLang = e.target.value as LanguageName;
-		setLang(newLang);
-		setCode(languages[newLang].boilerplate);
-	};
-
-	const handleSubmit = () => {
-		console.log("Submitting code:", code);
-		alert("Code submitted! (Check console)");
-	};
+	}, [handleSubmit]);
 
 	const toggleTheme = () => {
 		setThemeMode(themeMode === "dark" ? "light" : "dark");
@@ -199,7 +206,7 @@ export const CodeIde = () => {
 							} flex justify-between items-center`}
 						>
 							<select
-								value={lang}
+								value={language}
 								onChange={handleLanguageChange}
 								className={`${
 									isDark
@@ -230,7 +237,7 @@ export const CodeIde = () => {
 							<CodeMirror
 								value={code}
 								onChange={onChange}
-								extensions={languages[lang].extension}
+								extensions={languages[language].extension}
 								theme={effectiveTheme}
 								height="100%"
 								style={{ fontSize: "16px", height: "100%" }}
