@@ -16,4 +16,12 @@ public class JobCreatedEvent implements Serializable {
 
     private String code;
     private ProgrammingLanguage language;
+
+    @Override
+    public String toString() {
+        return "JobCreatedEvent{" +
+                "jobId=" + jobId +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }
