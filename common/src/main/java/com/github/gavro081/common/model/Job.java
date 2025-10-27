@@ -1,7 +1,5 @@
-package com.github.gavro081.apiserver.model;
+package com.github.gavro081.common.model;
 
-import com.github.gavro081.common.model.JobStatus;
-import com.github.gavro081.common.model.ProgrammingLanguage;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

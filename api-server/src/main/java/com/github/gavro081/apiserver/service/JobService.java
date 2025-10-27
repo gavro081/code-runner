@@ -1,15 +1,16 @@
 package com.github.gavro081.apiserver.service;
 
 import com.github.gavro081.apiserver.dto.CodeSubmissionDto;
-import com.github.gavro081.apiserver.model.Job;
 import com.github.gavro081.apiserver.repository.JobRepository;
 import com.github.gavro081.common.config.RabbitMQConfig;
 import com.github.gavro081.common.events.JobCreatedEvent;
+import com.github.gavro081.common.model.Job;
 import com.github.gavro081.common.model.JobStatus;
 import com.github.gavro081.common.model.ProgrammingLanguage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -34,8 +35,8 @@ public class JobService {
         Job savedJob = jobRepository.save(job);
 
         JobCreatedEvent event = JobCreatedEvent.builder()
-                .code(code)
-                .language(language)
+                .jobId(savedJob.getId())
+                .timestamp(Instant.now())
                 .build();
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "job.created", event);

@@ -1,1 +1,2 @@
 com.github.gavro081.common.config.RabbitMQConfig
+com.github.gavro081.common.config.CommonJpaAutoConfiguration
