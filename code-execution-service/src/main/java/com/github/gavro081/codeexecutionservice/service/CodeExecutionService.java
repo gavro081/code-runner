@@ -32,10 +32,10 @@ public class CodeExecutionService {
     private final Map<ProgrammingLanguage, LanguageConfig> languageConfigMap = new EnumMap<>(ProgrammingLanguage.class);
 
     // limit how many bytes we keep in-memory for stdout/stderr
-    private static final int MAX_CAPTURE_BYTES = 64 * 1024; // 64 KB
+    private static final int MAX_CAPTURE_BYTES = 10 * 1024; // 64 KB
 
     // docker json-file log driver rotation options (limits on-disk logs)
-    private static final String LOG_MAX_SIZE = "64k";
+    private static final String LOG_MAX_SIZE = "10k";
     private static final String LOG_MAX_FILES = "1";
 
     private record LanguageConfig(String imageName, String... command){}
@@ -61,7 +61,7 @@ public class CodeExecutionService {
                 new LanguageConfig("javascript-coderunner-image", "node", "-e"));
     }
 
-    public ExecutionResult execute(String code, ProgrammingLanguage language){
+    public ExecutionResult execute(String code, ProgrammingLanguage language) {
         LanguageConfig config = languageConfigMap.get(language);
         if (config == null)
             return ExecutionResult.builder()
@@ -85,7 +85,7 @@ public class CodeExecutionService {
                 .withAutoRemove(true)
                 .withLogConfig((new LogConfig(LogConfig.LoggingType.JSON_FILE, logOptions)));
 
-        String []command = {config.command[0], config.command[1], code};
+        String[] command = {config.command[0], config.command[1], code};
 
         CreateContainerResponse container = dockerClient.createContainerCmd(config.imageName)
                 .withHostConfig(hostConfig)
@@ -114,35 +114,18 @@ public class CodeExecutionService {
                     public void onNext(Frame object) {
                         byte[] payload = object.getPayload() == null ? new byte[0] : object.getPayload();
                         if (object.getStreamType() == StreamType.STDOUT) {
-                            if (!stdoutTruncated.get()) {
-                                int remaining = MAX_CAPTURE_BYTES - stdout.length();
-                                if (remaining <= 0) {
-                                    stdoutTruncated.set(true);
-                                    return;
-                                }
-                                int toAppend = Math.min(remaining, payload.length);
-                                stdout.append(new String(payload, 0, toAppend, StandardCharsets.UTF_8));
-                                if (toAppend < payload.length || stdout.length() >= MAX_CAPTURE_BYTES) {
-                                    stdoutTruncated.set(true);
-                                }
+                            appendToBufferWithTruncation(stdout, stdoutTruncated, payload);
+                            if (stdoutTruncated.get() && !stdout.toString().endsWith("[stdout truncated]")) {
+                                stdout.append("\n[stdout truncated]");
                             }
                         } else if (object.getStreamType() == StreamType.STDERR) {
-                            if (!stderrTruncated.get()) {
-                                int remaining = MAX_CAPTURE_BYTES - stderr.length();
-                                if (remaining <= 0) {
-                                    stderrTruncated.set(true);
-                                    return;
-                                }
-                                int toAppend = Math.min(remaining, payload.length);
-                                stderr.append(new String(payload, 0, toAppend, StandardCharsets.UTF_8));
-                                if (toAppend < payload.length || stderr.length() >= MAX_CAPTURE_BYTES) {
-                                    stderrTruncated.set(true);
-                                }
+                            appendToBufferWithTruncation(stderr, stderrTruncated, payload);
+                            if (stderrTruncated.get() && !stderr.toString().endsWith("[stderr truncated]")) {
+                                stderr.append("\n[stderr truncated]");
                             }
                         }
                     }
-                }))
-    {
+                })) {
 
             try {
                 exitCode = dockerClient.waitContainerCmd(containerId)
@@ -170,15 +153,9 @@ public class CodeExecutionService {
                     // attempt to get the exit code if logs failed
                     Long codeLong = dockerClient.inspectContainerCmd(containerId).exec().getState().getExitCodeLong();
                     if (codeLong != null) exitCode = codeLong.intValue();
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
-        }
-
-        if (stdoutTruncated.get()) {
-            stderr.append("\n[stdout truncated]");
-        }
-        if (stderrTruncated.get()) {
-            stderr.append("\n[stderr truncated]");
         }
 
         return ExecutionResult.builder()
@@ -188,4 +165,24 @@ public class CodeExecutionService {
                 .build();
 
     }
+
+    private void appendToBufferWithTruncation(
+        StringBuilder buffer,
+        AtomicBoolean truncatedFlag,
+        byte[] payload) {
+        if (truncatedFlag.get()) return;
+
+        int remaining = MAX_CAPTURE_BYTES - buffer.length();
+        if (remaining <= 0) {
+            truncatedFlag.set(true);
+            return;
+        }
+        int toAppend = Math.min(remaining, payload.length);
+        buffer.append(new String(payload, 0, toAppend, StandardCharsets.UTF_8));
+        if (toAppend < payload.length) {
+            truncatedFlag.set(true);
+        }
+
+    }
 }
+

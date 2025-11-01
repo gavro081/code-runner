@@ -37,21 +37,10 @@ export const problem = {
 export const languages = {
 	JAVASCRIPT: {
 		extension: [javascript({ jsx: true, typescript: true })],
-		boilerplate: `/**
- * @param {number[]} nums
- * @param {number} target
- * @return {number[]}
- */
-var twoSum = function(nums, target) {
-    
-};`,
+		boilerplate: `console.log('hello world')`,
 	},
 	PYTHON: {
 		extension: [python()],
-		boilerplate: `from typing import List
-
-class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        `,
+		boilerplate: `print('hello world')`,
 	},
 };
