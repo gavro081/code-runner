@@ -9,6 +9,11 @@ import Tooltip from "./Tooltip";
 
 type LanguageName = keyof typeof languages;
 type ThemeMode = "light" | "dark";
+interface JobResult {
+	jobStatus: "RUNNING" | "COMPLETED" | "FAILED";
+	stdout: string;
+	stderr: string;
+}
 
 const getKeyboardShortcut = () => {
 	const userAgent = navigator.userAgent.toLowerCase();
@@ -39,18 +44,33 @@ export const CodeIde = () => {
 	};
 
 	const handleSubmit = useCallback(async () => {
-		const response = await fetch("http://localhost:8080/api/submit", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ code, language }),
-		});
-		const result = await response.json();
-		console.log(result);
-		alert("code sent. check logs");
-		console.log("Response:", result);
+		try {
+			const response = await fetch("http://localhost:8080/api/submit", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ code, language }),
+			});
+			const result = await response.json();
+			alert("code sent. check logs");
+			console.log("Response:", result);
+			pollJobStatus(result.job_id);
+		} catch (error) {}
 	}, [code]);
+
+	const pollJobStatus = (jobId: string) => {
+		const poll = setInterval(async () => {
+			console.log("polling status...");
+			const res = await fetch(`http://localhost:8080/api/status/${jobId}`);
+			const jobResult: JobResult = await res.json();
+			if (jobResult.jobStatus != "RUNNING") {
+				clearInterval(poll);
+				alert("received job status, check logs");
+				console.log(jobResult);
+			}
+		}, 1000);
+	};
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
