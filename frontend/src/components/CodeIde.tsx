@@ -17,7 +17,7 @@ const getKeyboardShortcut = () => {
 };
 
 export const CodeIde = () => {
-	const [language, setLanguage] = useState<LanguageName>("javascript");
+	const [language, setLanguage] = useState<LanguageName>("JAVASCRIPT");
 	const [code, setCode] = useState(languages[language].boilerplate);
 	const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
 	const [effectiveTheme, setEffectiveTheme] = useState(tokyoNightDay);
@@ -47,6 +47,8 @@ export const CodeIde = () => {
 			body: JSON.stringify({ code, language }),
 		});
 		const result = await response.json();
+		console.log(result);
+		alert("code sent. check logs");
 		console.log("Response:", result);
 	}, [code]);
 
@@ -214,8 +216,8 @@ export const CodeIde = () => {
 										: "bg-gray-200 text-gray-900 border-gray-300"
 								} rounded px-3 py-1`}
 							>
-								<option value="javascript">JavaScript</option>
-								<option value="python">Python</option>
+								<option value="JAVASCRIPT">JavaScript</option>
+								<option value="PYTHON">Python</option>
 							</select>
 							<button
 								onClick={toggleTheme}

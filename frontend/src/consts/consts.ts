@@ -35,7 +35,7 @@ export const problem = {
 };
 
 export const languages = {
-	javascript: {
+	JAVASCRIPT: {
 		extension: [javascript({ jsx: true, typescript: true })],
 		boilerplate: `/**
  * @param {number[]} nums
@@ -46,7 +46,7 @@ var twoSum = function(nums, target) {
     
 };`,
 	},
-	python: {
+	PYTHON: {
 		extension: [python()],
 		boilerplate: `from typing import List
 
