@@ -64,7 +64,10 @@ export const CodeIde = () => {
 			console.log("polling status...");
 			const res = await fetch(`http://localhost:8080/api/status/${jobId}`);
 			const jobResult: JobResult = await res.json();
-			if (jobResult.jobStatus != "RUNNING") {
+			if (
+				jobResult.jobStatus == "COMPLETED" ||
+				jobResult.jobStatus == "FAILED"
+			) {
 				clearInterval(poll);
 				alert("received job status, check logs");
 				console.log(jobResult);
