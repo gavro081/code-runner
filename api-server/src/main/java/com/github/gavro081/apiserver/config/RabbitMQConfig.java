@@ -1,9 +1,6 @@
-package com.github.gavro081.common.config;
+package com.github.gavro081.apiserver.config;
 
 import com.github.gavro081.common.events.JobCreatedEvent;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -14,24 +11,13 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.github.gavro081.common.config.RabbitMQConstants.EXCHANGE_NAME;
+
 @Configuration
 public class RabbitMQConfig {
-    public static final String EXCHANGE_NAME = "job_events_exchange";
-    public static final String WORKER_QUEUE = "worker_queue";
-
     @Bean
     TopicExchange exchange(){
         return new TopicExchange(EXCHANGE_NAME);
-    }
-
-    @Bean
-    Queue workerQueue(){
-        return new Queue(WORKER_QUEUE, true);
-    }
-
-    @Bean
-    Binding workersBinding(Queue workerQueue, TopicExchange exchange){
-        return BindingBuilder.bind(workerQueue).to(exchange).with("job.created");
     }
 
     @Bean

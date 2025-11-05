@@ -3,17 +3,16 @@ package com.github.gavro081.codeexecutionservice.listeners;
 import com.github.gavro081.codeexecutionservice.models.ExecutionResult;
 import com.github.gavro081.codeexecutionservice.service.CodeExecutionService;
 import com.github.gavro081.codeexecutionservice.service.JobHandlerService;
-import com.github.gavro081.common.config.RabbitMQConfig;
+import com.github.gavro081.common.config.RabbitMQConstants;
 import com.github.gavro081.common.events.JobCreatedEvent;
 import com.github.gavro081.common.model.Job;
 import com.github.gavro081.common.model.JobStatus;
-import com.sun.jdi.event.ExceptionEvent;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@RabbitListener(queues = RabbitMQConfig.WORKER_QUEUE)
+@RabbitListener(queues = RabbitMQConstants.WORKER_QUEUE, containerFactory = "jobListenerFactory")
 public class JobEventListener {
     private final JobHandlerService jobHandlerService;
     private final CodeExecutionService codeExecutionService;

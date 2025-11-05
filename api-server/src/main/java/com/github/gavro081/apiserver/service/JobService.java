@@ -4,7 +4,7 @@ import com.github.gavro081.apiserver.dto.CodeSubmissionDto;
 import com.github.gavro081.apiserver.dto.JobStatusDto;
 import com.github.gavro081.apiserver.exceptions.JobNotFoundException;
 import com.github.gavro081.apiserver.repository.JobRepository;
-import com.github.gavro081.common.config.RabbitMQConfig;
+import com.github.gavro081.common.config.RabbitMQConstants;
 import com.github.gavro081.common.events.JobCreatedEvent;
 import com.github.gavro081.common.model.Job;
 import com.github.gavro081.common.model.JobStatus;
@@ -42,7 +42,7 @@ public class JobService {
                 .timestamp(Instant.now())
                 .build();
 
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "job.created", event);
+        rabbitTemplate.convertAndSend(RabbitMQConstants.EXCHANGE_NAME, "job.created", event);
         return savedJob.getId();
     }
 
