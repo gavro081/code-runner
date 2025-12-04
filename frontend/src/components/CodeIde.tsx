@@ -73,6 +73,9 @@ export const CodeIde = () => {
 				console.log(jobResult);
 			}
 		}, 1000);
+		// stop fetching after 10.5s
+		// todo: display some error
+		setTimeout(() => clearInterval(poll), 10500);
 	};
 
 	useEffect(() => {

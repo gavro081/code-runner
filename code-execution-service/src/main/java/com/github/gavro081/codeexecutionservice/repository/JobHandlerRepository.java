@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Repository
 public interface JobHandlerRepository extends JpaRepository<Job, UUID> {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT j FROM Job j WHERE j.id = :id")
-    Optional<Job> findAndLockBId(UUID id);
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
+//    @Query("SELECT j FROM Job j WHERE j.id = :id")
+//    Optional<Job> findAndLockBId(UUID id);
 }

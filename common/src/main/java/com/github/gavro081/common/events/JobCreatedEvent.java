@@ -1,13 +1,21 @@
 package com.github.gavro081.common.events;
 
+import com.github.gavro081.common.model.ProgrammingLanguage;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
+
+// todo: add test cases
 @Builder
-public record JobCreatedEvent(UUID jobId, Instant timestamp) implements Serializable {
+public record JobCreatedEvent(
+        UUID jobId,
+        Instant timestamp,
+        ProgrammingLanguage language,
+        String code) implements Serializable {
+
     @Override
     public String toString() {
         return "JobCreatedEvent{" +

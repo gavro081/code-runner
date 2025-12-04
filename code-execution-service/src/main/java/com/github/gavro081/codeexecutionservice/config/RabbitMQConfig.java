@@ -1,6 +1,7 @@
 package com.github.gavro081.codeexecutionservice.config;
 
 import com.github.gavro081.common.events.JobCreatedEvent;
+import com.github.gavro081.common.events.JobStatusEvent;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -46,6 +47,7 @@ public class RabbitMQConfig {
 
         Map<String, Class<?>> idClassMapping = new HashMap<>();
         idClassMapping.put("com.github.gavro081.common.events.JobCreatedEvent", JobCreatedEvent.class);
+        idClassMapping.put("com.github.gavro081.common.events.JobStatusEvent", JobStatusEvent.class);
 
         classMapper.setIdClassMapping(idClassMapping);
         converter.setClassMapper(classMapper);
