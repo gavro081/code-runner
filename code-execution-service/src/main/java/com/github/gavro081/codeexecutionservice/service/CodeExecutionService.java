@@ -1,10 +1,25 @@
 package com.github.gavro081.codeexecutionservice.service;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.github.gavro081.codeexecutionservice.models.TestCasesProjection;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.WaitContainerResultCallback;
 import com.github.dockerjava.api.model.Frame;
+import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.LogConfig;
 import com.github.dockerjava.api.model.StreamType;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
@@ -13,23 +28,27 @@ import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
 import com.github.gavro081.codeexecutionservice.models.ExecutionResult;
+import com.github.gavro081.common.events.JobCreatedEvent;
 import com.github.gavro081.common.model.ProgrammingLanguage;
-import jakarta.annotation.PostConstruct;
-import com.github.dockerjava.api.model.HostConfig;
-import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.nio.charset.StandardCharsets;
+import jakarta.annotation.PostConstruct;
 
 
 @Service
 public class CodeExecutionService {
     private DockerClient dockerClient;
     private final Map<ProgrammingLanguage, LanguageConfig> languageConfigMap = new EnumMap<>(ProgrammingLanguage.class);
+    private final ProblemService problemService;
+    private final ObjectMapper objectMapper;
+    private final ResourceLoader resourceLoader;
+    public CodeExecutionService(
+            ProblemService problemService,
+            ObjectMapper objectMapper,
+            @Qualifier("webApplicationContext") ResourceLoader resourceLoader ){
+        this.problemService = problemService;
+        this.objectMapper = objectMapper;
+        this.resourceLoader = resourceLoader;
+    }
 
     // limit how many bytes we keep in-memory for stdout/stderr
     private static final int MAX_CAPTURE_BYTES = 10 * 1024; // 64 KB
@@ -61,7 +80,22 @@ public class CodeExecutionService {
                 new LanguageConfig("javascript-coderunner-image", "node", "-e"));
     }
 
-    public ExecutionResult execute(String code, ProgrammingLanguage language) {
+    public ExecutionResult execute(JobCreatedEvent job) throws IOException {
+        ProgrammingLanguage language = job.language();
+        String code = job.code();
+        TestCasesProjection testCasesProjection = problemService.getTestCases(job.problemId());
+
+        String harnessTemplate = loadHarnessFromTemplate(language);
+
+        String testCasesJSon = objectMapper
+                .writeValueAsString(testCasesProjection.getTestCases())
+                .replace("\\n", "\\\\n");
+
+        String finalScript = harnessTemplate
+                    .replace("{{USER_CODE}}", code)
+                    .replace("{{TEST_CASES_JSON}}", testCasesJSon);
+
+
         LanguageConfig config = languageConfigMap.get(language);
         if (config == null)
             return ExecutionResult.builder()
@@ -85,7 +119,7 @@ public class CodeExecutionService {
                 .withAutoRemove(true)
                 .withLogConfig((new LogConfig(LogConfig.LoggingType.JSON_FILE, logOptions)));
 
-        String[] command = {config.command[0], config.command[1], code};
+        String[] command = {config.command[0], config.command[1], finalScript};
 
         CreateContainerResponse container = dockerClient.createContainerCmd(config.imageName)
                 .withHostConfig(hostConfig)
@@ -183,6 +217,17 @@ public class CodeExecutionService {
             truncatedFlag.set(true);
         }
 
+    }
+
+    private String loadHarnessFromTemplate(ProgrammingLanguage programmingLanguage) throws IOException {
+        String filepath = switch (programmingLanguage) {
+            case JAVASCRIPT -> "classpath:templates/js-harness.js";
+            case PYTHON -> "classpath:templates/python-harness.py";
+        };
+
+        try (var input = resourceLoader.getResource(filepath).getInputStream()) {
+            return new String(input.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 }
 

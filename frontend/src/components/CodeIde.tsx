@@ -24,6 +24,7 @@ const getKeyboardShortcut = () => {
 export const CodeIde = () => {
 	const [language, setLanguage] = useState<LanguageName>("JAVASCRIPT");
 	const [code, setCode] = useState(languages[language].boilerplate);
+	const [problemId, setProblemId] = useState("two-sum");
 	const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
 	const [effectiveTheme, setEffectiveTheme] = useState(tokyoNightDay);
 
@@ -50,7 +51,7 @@ export const CodeIde = () => {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ code, language }),
+				body: JSON.stringify({ code, language, problemId }),
 			});
 			const result = await response.json();
 			alert("code sent. check logs");

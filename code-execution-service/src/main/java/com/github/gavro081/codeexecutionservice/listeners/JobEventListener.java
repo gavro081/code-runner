@@ -27,7 +27,7 @@ public class JobEventListener {
         ExecutionResult result;
         JobStatus finalStatus;
         try {
-            result = codeExecutionService.execute(job.code(), job.language());
+            result = codeExecutionService.execute(job);
             finalStatus = result.isSuccess() ? JobStatus.COMPLETED : JobStatus.FAILED;
         } catch (Exception e) {
             System.out.printf("error - jobId: %s - errMsg: %s", job.jobId(), e.getMessage());

@@ -1,36 +1,18 @@
 package com.github.gavro081.codeexecutionservice.service;
 
-import com.github.gavro081.codeexecutionservice.dto.ProblemTestDto;
-import com.github.gavro081.common.model.ProgrammingLanguage;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
-import org.springframework.data.mongodb.core.query.Criteria;
+import com.github.gavro081.codeexecutionservice.models.TestCasesProjection;
+import com.github.gavro081.codeexecutionservice.repository.ProblemRepository;
 import org.springframework.stereotype.Service;
-
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Service
 public class ProblemService {
-    private final MongoTemplate mongoTemplate;
+    private final ProblemRepository problemRepository;
 
-    public ProblemService(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
+    public ProblemService(ProblemRepository problemRepository) {
+        this.problemRepository = problemRepository;
     }
 
-    public ProblemTestDto getStarters(String id, ProgrammingLanguage lang) {
-        // todo: explain
-        MatchOperation match = match(Criteria.where("_id").is(id));
-        ProjectionOperation project = project()
-                .and("testCases").as("testCases")
-                .and("starterTemplates." + lang.name()).as("template");
-
-        Aggregation agg = newAggregation(match, project);
-
-        return mongoTemplate.aggregate(agg, "problems", ProblemTestDto.class)
-                .getUniqueMappedResult();
+    public TestCasesProjection getTestCases(String id) {
+        return problemRepository.findTestCasesById(id);
     }
-
-
 }
