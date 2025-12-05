@@ -1,5 +1,6 @@
-package com.github.gavro081.apiserver.repository;
+package com.github.gavro081.apiserver.repository.impl;
 
+import com.github.gavro081.apiserver.repository.JobStatusEventStore;
 import com.github.gavro081.common.events.JobStatusEvent;
 import com.github.gavro081.common.model.JobStatus;
 import org.springframework.stereotype.Repository;

@@ -54,6 +54,7 @@ public class JobService {
         jobStatusEventStore.save(job);
 
         JobCreatedEvent event = JobCreatedEvent.builder()
+                .problemId(codeSubmissionDto.problemId())
                 .jobId(jobId)
                 .timestamp(Instant.now())
                 .code(code)

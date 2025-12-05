@@ -8,13 +8,14 @@ import java.time.Instant;
 import java.util.UUID;
 
 
-// todo: add test cases
 @Builder
 public record JobCreatedEvent(
         UUID jobId,
+        String problemId,
         Instant timestamp,
         ProgrammingLanguage language,
-        String code) implements Serializable {
+        String code
+) implements Serializable {
 
     @Override
     public String toString() {

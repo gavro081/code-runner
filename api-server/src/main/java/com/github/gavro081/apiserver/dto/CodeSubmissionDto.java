@@ -10,5 +10,6 @@ public record CodeSubmissionDto(
     @Size(max = 10000, message = "Code cannot be larger than 10KB")
     String code,
     @NotNull(message = "Language is required")
-    ProgrammingLanguage language
+    ProgrammingLanguage language,
+    String problemId
 ){}

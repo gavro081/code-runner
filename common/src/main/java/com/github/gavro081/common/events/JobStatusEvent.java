@@ -12,5 +12,4 @@ public record JobStatusEvent(
         JobStatus status,
         String stdout,
         String stderr
-)
-{}
+) {}
