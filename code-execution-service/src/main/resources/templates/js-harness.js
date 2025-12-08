@@ -1,6 +1,7 @@
 const fs = require("fs");
 
 // INJECTED USER CODE
+// prettier-ignore
 {{USER_CODE}}
 
 // INJECTED TEST CASES

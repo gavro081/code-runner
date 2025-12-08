@@ -1,20 +1,24 @@
 package com.github.gavro081.common.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.List;
-import java.io.Serializable;
-import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+
+import jakarta.persistence.Column;
 
 @Document(collection = "problems")
 @Getter @Setter
 public class Problem implements Serializable {
     @Id
     @Column(name = "id")
+    @JsonAlias("_id")
     private String id;
 
     private String difficulty;
