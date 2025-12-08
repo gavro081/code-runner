@@ -4,7 +4,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { Moon, Sun } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { languages, problem } from "../consts/consts";
+import { languages, type ProblemView } from "../consts/consts";
 import Tooltip from "./Tooltip";
 
 type LanguageName = keyof typeof languages;
@@ -22,26 +22,56 @@ const getKeyboardShortcut = () => {
 };
 
 export const CodeIde = () => {
-	const [language, setLanguage] = useState<LanguageName>("JAVASCRIPT");
+	const [language, setLanguage] = useState<LanguageName>("PYTHON");
 	const [code, setCode] = useState(languages[language].boilerplate);
 	const [problemId, setProblemId] = useState("two-sum");
+	const [problem, setProblem] = useState<ProblemView>();
 	const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
 	const [effectiveTheme, setEffectiveTheme] = useState(tokyoNightDay);
+	const isDark = effectiveTheme === tokyoNight;
 
 	useEffect(() => {
 		setEffectiveTheme(themeMode === "dark" ? tokyoNight : tokyoNightDay);
 	}, [themeMode]);
 
-	const isDark = effectiveTheme === tokyoNight;
+	// check all problem IDs | replacement for proper tests
+	// useEffect(() => {
+	// 	let index = 0;
+	// 	const interval = setInterval(() => {
+	// 		if (index < problemsIds.length) {
+	// 			setProblemId(problemsIds[index]);
+	// 			index++;
+	// 		} else {
+	// 			clearInterval(interval);
+	// 		}
+	// 	}, 1000);
+
+	// 	return () => clearInterval(interval);
+	// }, []);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const url = `http://localhost:8080/api/problems/${problemId}`;
+			const response = await fetch(url);
+			const data: ProblemView = await response.json();
+			setProblem(data);
+			setCode(data.starterTemplates[language]);
+		};
+		fetchData();
+	}, [problemId]);
 
 	const onChange = useCallback((value: string) => {
 		setCode(value);
 	}, []);
 
 	const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		if (!problem) return;
 		const newLang = e.target.value as LanguageName;
 		setLanguage(newLang);
-		setCode(languages[newLang].boilerplate);
+		const template = problem.starterTemplates[newLang];
+		if (template) {
+			setCode(template);
+		}
 	};
 
 	const handleSubmit = useCallback(async () => {
@@ -95,6 +125,8 @@ export const CodeIde = () => {
 		setThemeMode(themeMode === "dark" ? "light" : "dark");
 	};
 
+	if (!problem) return <p>Loading...</p>;
+
 	return (
 		<div
 			className={`h-full w-full ${
@@ -112,9 +144,10 @@ export const CodeIde = () => {
 							>
 								{problem.title}
 							</h1>
-							{/* <span className="px-2 py-1 bg-green-900 text-green-300 text-xs rounded">
+							<span className="px-2 py-1 bg-green-900 text-green-300 text-xs rounded">
+								{/* change color for difficulties */}
 								{problem.difficulty}
-							</span> */}
+							</span>
 						</div>
 
 						<p
@@ -140,7 +173,7 @@ export const CodeIde = () => {
 						</div>
 
 						<div className="space-y-4 mb-6">
-							{problem.examples.map((example, i) => (
+							{problem.exampleTestCases?.map((example, i) => (
 								<div
 									key={i}
 									className={`bg-gray-800 rounded p-4 ${
@@ -173,49 +206,37 @@ export const CodeIde = () => {
 											>
 												Output:
 											</span>{" "}
-											<code className="text-green-400">{example.output}</code>
+											<code className="text-green-400">
+												{example.expectedOutput}
+											</code>
 										</div>
-										{example.explanation && (
-											<div
-												className={`${
-													isDark ? "text-gray-400" : "text-gray-600"
-												} mt-2`}
-											>
-												<span
-													className={`font-medium ${
-														isDark ? "text-gray-300" : "text-gray-700"
-													}`}
-												>
-													Explanation:
-												</span>{" "}
-												{example.explanation}
-											</div>
-										)}
 									</div>
 								</div>
 							))}
 						</div>
 
-						<div>
-							<h3
-								className={`font-semibold ${
-									isDark ? "text-white" : "text-gray-900"
-								} mb-2`}
-							>
-								Constraints:
-							</h3>
-							<ul
-								className={`space-y-1 ${
-									isDark ? "text-gray-400" : "text-gray-600"
-								}`}
-							>
-								{problem.constraints.map((constraint, i) => (
-									<li key={i} className="text-sm">
-										• {constraint}
-									</li>
-								))}
-							</ul>
-						</div>
+						{problem.constraints.length != 0 && (
+							<div>
+								<h3
+									className={`font-semibold ${
+										isDark ? "text-white" : "text-gray-900"
+									} mb-2`}
+								>
+									Constraints:
+								</h3>
+								<ul
+									className={`space-y-1 ${
+										isDark ? "text-gray-400" : "text-gray-600"
+									}`}
+								>
+									{problem.constraints.map((constraint, i) => (
+										<li key={i} className="text-sm">
+											• {constraint}
+										</li>
+									))}
+								</ul>
+							</div>
+						)}
 					</div>
 				</Panel>
 

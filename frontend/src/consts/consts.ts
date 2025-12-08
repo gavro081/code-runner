@@ -1,9 +1,26 @@
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 
-export const problem = {
+interface TestCase {
+	input: string;
+	expectedOutput: string;
+}
+
+type LanguageName = keyof typeof languages;
+
+export interface ProblemView {
+	title: string;
+	difficulty: "EASY" | "MEDIUM" | "HARD";
+	description: string;
+	assumptions: string[];
+	exampleTestCases: TestCase[];
+	constraints: string[];
+	starterTemplates: Record<LanguageName, string>;
+}
+
+export const problem: ProblemView = {
 	title: "1. Two Sum",
-	difficulty: "Easy",
+	difficulty: "EASY",
 	description:
 		"Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
 	assumptions: [
@@ -11,19 +28,18 @@ export const problem = {
 		"You may not use the same element twice",
 		"You can return the answer in any order",
 	],
-	examples: [
+	exampleTestCases: [
 		{
 			input: "nums = [2,7,11,15], target = 9",
-			output: "[0,1]",
-			explanation: "Because nums[0] + nums[1] == 9, we return [0, 1].",
+			expectedOutput: "[0,1]",
 		},
 		{
 			input: "nums = [3,2,4], target = 6",
-			output: "[1,2]",
+			expectedOutput: "[1,2]",
 		},
 		{
 			input: "nums = [3,3], target = 6",
-			output: "[0,1]",
+			expectedOutput: "[0,1]",
 		},
 	],
 	constraints: [
@@ -32,6 +48,12 @@ export const problem = {
 		"-10⁹ <= target <= 10⁹",
 		"Only one valid answer exists",
 	],
+	starterTemplates: {
+		PYTHON:
+			"class Solution:\n def twoSum(self, nums: List[int], target: int) -> List[int]:\n pass",
+		JAVASCRIPT:
+			"/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nvar twoSum = function(nums, target) {\n \n};",
+	},
 };
 
 export const languages = {
@@ -44,3 +66,24 @@ export const languages = {
 		boilerplate: `print('hello world')`,
 	},
 };
+
+export const problemsIds = [
+	"two-sum",
+	"a-phone-code",
+	"acronyms",
+	"caesar-cipher",
+	"cakes",
+	"consecutive-numbers",
+	"fibonacci",
+	"first-non-repeating-character",
+	"fizzbuzz",
+	"frequency-deviation",
+	"heap-algorithm",
+	"look-and-say-sequence-conway",
+	"rotate-2-dimensional-array-90-degrees",
+	"signal-path-through-the-underground-network",
+	"sudoku",
+	"valid-parentheses",
+	"print-pyramid",
+	"maximum-subarray-sum",
+];

@@ -2,6 +2,7 @@ package com.github.gavro081.apiserver.controller;
 
 import com.github.gavro081.apiserver.dto.CodeSubmissionDto;
 import com.github.gavro081.apiserver.dto.JobStatusDto;
+import com.github.gavro081.apiserver.dto.ProblemDto;
 import com.github.gavro081.apiserver.exceptions.JobNotFoundException;
 import com.github.gavro081.apiserver.service.JobService;
 import com.github.gavro081.apiserver.service.ProblemService;
@@ -38,10 +39,19 @@ public class ApiServerController {
     }
 
     @GetMapping("/problems/{problemId}")
-    ResponseEntity<Problem> getProblem(@PathVariable @NotNull String problemId){
+    ResponseEntity<ProblemDto> getProblem(@PathVariable @NotNull String problemId){
         try {
             Problem p = problemService.getProblem(problemId);
-            return ResponseEntity.ok(p);
+            ProblemDto problemDto = ProblemDto.builder()
+                    .title(p.getTitle())
+                    .assumptions(p.getAssumptions())
+                    .difficulty(p.getDifficulty())
+                    .exampleTestCases(p.getExampleTestCases())
+                    .description(p.getDescription())
+                    .starterTemplates(p.getStarterTemplates())
+                    .constraints(p.getConstraints())
+                    .build();
+            return ResponseEntity.ok(problemDto);
         } catch (Exception e){
             return ResponseEntity.notFound().build();
         }
