@@ -13,6 +13,6 @@ public class ProblemService {
     }
 
     public TestCasesProjection getTestCases(String id) {
-        return problemRepository.findTestCasesById(id);
+        return problemRepository.findTestCasesAndMethodNameById(id);
     }
 }

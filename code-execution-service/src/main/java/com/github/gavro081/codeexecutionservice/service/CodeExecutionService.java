@@ -84,7 +84,6 @@ public class CodeExecutionService {
         ProgrammingLanguage language = job.language();
         String code = job.code();
         TestCasesProjection testCasesProjection = problemService.getTestCases(job.problemId());
-
         String harnessTemplate = loadHarnessFromTemplate(language);
 
         String testCasesJSon = objectMapper
@@ -92,8 +91,9 @@ public class CodeExecutionService {
                 .replace("\\n", "\\\\n");
 
         String finalScript = harnessTemplate
-                    .replace("{{USER_CODE}}", code)
-                    .replace("{{TEST_CASES_JSON}}", testCasesJSon);
+                .replace("{{USER_CODE}}", code)
+                .replace("{{TEST_CASES_JSON}}", testCasesJSon)
+                .replace("{{METHOD_NAME}}", testCasesProjection.getMethodName());
 
 
         LanguageConfig config = languageConfigMap.get(language);

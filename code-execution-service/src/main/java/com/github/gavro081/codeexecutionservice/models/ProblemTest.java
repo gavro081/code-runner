@@ -4,7 +4,8 @@ import com.github.gavro081.common.model.TestCase;
 
 import java.util.List;
 
-public interface TestCasesProjection {
-    List<TestCase> getTestCases();
-    String getMethodName();
+public class ProblemTest {
+    String methodName;
+    List<TestCase> testCaseList;
+
 }

@@ -1,2 +1,5 @@
 .idea
 about/
+.venv/
+**/__pycache__
+code_execution_db.problems.json

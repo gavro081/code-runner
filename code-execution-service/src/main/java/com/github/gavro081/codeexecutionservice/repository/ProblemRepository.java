@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProblemRepository extends MongoRepository<Problem, String> {
-    @Query(value = "{ '_id': ?0 }", fields = "{ 'testCases': 1, '_id': 0 }")
-    TestCasesProjection findTestCasesById(String id);
+    @Query(value = "{ '_id': ?0 }", fields = "{ 'testCases': 1, '_id': 0, 'methodName': 2 }")
+    TestCasesProjection findTestCasesAndMethodNameById(String id);
 }

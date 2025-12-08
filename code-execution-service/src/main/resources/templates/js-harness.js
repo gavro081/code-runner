@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require("fs");
 
 // INJECTED USER CODE
 {{USER_CODE}}
@@ -8,53 +8,82 @@ const testCasesJson = `
 {{TEST_CASES_JSON}}
 `;
 
+const METHOD_NAME = "{{METHOD_NAME}}";
+
 // TEST RUNNER LOGIC
 function runTests() {
-    let testCases;
-    try {
-        testCases = JSON.parse(testCasesJson);
-    } catch (e) {
-        console.log(`SYSTEM ERROR: Invalid test case JSON. ${e.message}`);
-        return;
-    }
+	let testCases;
+	try {
+		testCases = JSON.parse(testCasesJson);
+	} catch (e) {
+		console.log(`SYSTEM ERROR: Invalid test case JSON. ${e.message}`);
+		return;
+	}
 
-    for (let i = 0; i < testCases.length; i++) {
-        const test = testCases[i];
+	let userMethod;
+	try {
+		userMethod = eval(METHOD_NAME);
+	} catch (e) {
+		// ignore
+	}
 
-        try {
-            // Example input string: "[2,7,11,15]\\n9"
-            const inputParts = test.input.trim().split("\n");
-            const nums = JSON.parse(inputParts[0]);
-            const target = parseInt(inputParts[1]);
+	if (typeof userMethod !== "function") {
+		console.log(`FAILED: Function '${METHOD_NAME}' not found.`);
+		return;
+	}
 
-            const expected = JSON.parse(test.expectedOutput);
+	for (let i = 0; i < testCases.length; i++) {
+		const test = testCases[i];
 
-            if (typeof twoSum !== "function") {
-                console.log("FAILED: Function 'twoSum' not found.");
-                return;
-            }
+		try {
+			let args;
+			try {
+				args = JSON.parse(test.input);
+			} catch (e) {
+				args = [test.input];
+			}
 
-            const result = twoSum(nums, target);
+			if (!Array.isArray(args)) {
+				args = [args];
+			}
 
-            // sort both to ensure order doesn't matter (e.g. [0,1] == [1,0])
-            const resultSorted = JSON.stringify(result.sort((a, b) => a - b));
-            const expectedSorted = JSON.stringify(expected.sort((a, b) => a - b));
+			const expected = JSON.parse(test.expectedOutput);
 
-            if (resultSorted !== expectedSorted) {
-                console.log(`FAILED: Test Case ${i + 1}`);
-                console.log(`Input:    nums=${JSON.stringify(nums)}, target=${target}`);
-                console.log(`Expected: ${JSON.stringify(expected)}`);
-                console.log(`Got:      ${JSON.stringify(result)}`);
-                return;
-            }
-        } catch (e) {
-            console.log(`FAILED: Test Case ${i + 1} (Runtime Error)`);
-            console.log(`Error: ${e.message}`);
-            return;
-        }
-    }
+			const result = userMethod(...args);
 
-    console.log("PASSED ALL CASES");
+			let match = false;
+			// 1. direct equality check
+			if (JSON.stringify(result) === JSON.stringify(expected)) {
+				match = true;
+			} else if (Array.isArray(result) && Array.isArray(expected)) {
+				try {
+					// 2. sorted list check (assume order doesn't matter)
+					const resultSorted = JSON.stringify([...result].sort());
+					const expectedSorted = JSON.stringify([...expected].sort());
+					if (resultSorted === expectedSorted) {
+						match = true;
+					}
+				} catch (e) {
+					// ignore
+				}
+			}
+
+			if (!match) {
+				// print the raw args to help the user debug
+				console.log(`FAILED: Test Case ${i + 1}`);
+				console.log(`Input:    ${JSON.stringify(args)}`);
+				console.log(`Expected: ${JSON.stringify(expected)}`);
+				console.log(`Got:      ${JSON.stringify(result)}`);
+				return;
+			}
+		} catch (e) {
+			console.log(`FAILED: Test Case ${i + 1} (Runtime Error)`);
+			console.log(`Error: ${e.message}`);
+			return;
+		}
+	}
+
+	console.log("PASSED ALL TEST CASES");
 }
 
 runTests();

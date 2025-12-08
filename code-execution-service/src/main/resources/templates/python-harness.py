@@ -11,6 +11,8 @@ test_cases_json = """
 {{TEST_CASES_JSON}}
 """
 
+ENTRY_POINT = "{{METHOD_NAME}}"
+
 # TEST RUNNER LOGIC
 def run_tests():
     try:
@@ -25,26 +27,52 @@ def run_tests():
         print(f"SYSTEM ERROR: Invalid test case JSON format. Error: {e}")
         return
 
+    # Ensure the method exists on the solution object
+    if not hasattr(solution, ENTRY_POINT):
+        print(f"FAILED: Method '{ENTRY_POINT}' not found in Solution class.")
+        return
+
+    # Get the function reference
+    user_method = getattr(solution, ENTRY_POINT)
+
     for i, test in enumerate(test_cases):
         try:
-            # Example input string: "[2,7,11,15]\\n9"
+            # the input in thr db must be a json list of arguments.
+            try:
+                args = json.loads(test['input'])
+            except json.JSONDecodeError:
+                # fallback: if input isn't json, treat it as a single string argument
+                args = [test['input']]
 
-            # split the raw input string by newline
-            input_parts = test['input'].strip().split('\n')
-            nums = json.loads(input_parts[0])
-            target = int(input_parts[1])
+            # Basic validation to ensure args is a list
+            if not isinstance(args, list):
+                args = [args]
 
+            # parse expected output
             expected = json.loads(test['expectedOutput'])
 
-            # call user's function
-            result = solution.twoSum(nums, target)
+            # unpack args into list
+            result = user_method(*args)
 
-            # sort both to ensure order doesn't matter (e.g. [0,1] == [1,0])
-            if sorted(result) != sorted(expected):
+            match = False
+
+            # 1. direct equality check
+            if result == expected:
+                match = True
+            # 2. sorted list check (assume order doesn't matter)
+            elif isinstance(result, list) and isinstance(expected, list):
+                try:
+                    if sorted(str(x) for x in result) == sorted(str(x) for x in expected):
+                        match = True
+                except:
+                    pass # sort failed, rely on previous check
+
+            if not match:
                 print(f"FAILED: Test Case {i+1}")
-                print(f"Input:    nums={nums}, target={target}")
-                print(f"Expected: {expected}")
-                print(f"Got:      {result}")
+                # print the raw args to help the user debug
+                print(f"Input:    {json.dumps(args)}")
+                print(f"Expected: {json.dumps(expected)}")
+                print(f"Got:      {json.dumps(result)}")
                 return
 
         except Exception as e:
@@ -52,8 +80,7 @@ def run_tests():
             print(f"Error: {e}")
             return
 
-    # If we get here, no tests failed
-    print("PASSED ALL CASES")
+    print("PASSED ALL TEST CASES")
 
 if __name__ == "__main__":
     run_tests()

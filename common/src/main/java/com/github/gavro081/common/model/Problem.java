@@ -18,6 +18,7 @@ public class Problem implements Serializable {
     private String id;
 
     private String difficulty;
+    private String methodName;
 
     private String title;
     private String description;
