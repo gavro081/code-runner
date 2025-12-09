@@ -47,7 +47,7 @@ public class JobHandlerService {
                             .status(newStatus)
                             .stderr(stderr)
                             .stdout(stdout)
-                            .completedAt(Instant.now())
+//                            .completedAt(Instant.now())
                             .build()
         );
 

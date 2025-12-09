@@ -1,0 +1,5 @@
+{
+	"code": "import time\n\nclass Solution:\n def twoSum(self, nums: List[int], target: int) -> List[int]:\n    # time.sleep(5)\n\n   \n    for i, num1 in enumerate(nums):\n      for j in range(i + 1, len(nums)):\n        num2 = nums[j]\n        if num1 + num2 == target:\n          \n            return [i,j]",
+	"language": "PYTHON",
+	"problemId": "two-sum"
+}
