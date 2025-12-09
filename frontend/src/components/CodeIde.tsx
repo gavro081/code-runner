@@ -160,7 +160,7 @@ export const CodeIde = () => {
 								>
 									{problem.title}
 								</h1>
-								<span className="px-2 py-1 bg-green-900 text-green-300 text-xs rounded">
+								<span className="px-2 py-1 bg-green-700 text-green-300 text-xs rounded">
 									{/* change color for difficulties */}
 									{problem.difficulty}
 								</span>
@@ -192,13 +192,12 @@ export const CodeIde = () => {
 								{problem.exampleTestCases?.map((example, i) => (
 									<div
 										key={i}
-										className={`bg-gray-800 rounded p-4 ${
-											isDark ? "bg-gray-800" : "bg-gray-100"
-										}`}
+										className={`rounded p-4 
+											${isDark ? "bg-gray-800" : "bg-gray-200"}`}
 									>
 										<div
-											className={`font-semibold text-white mb-2 ${
-												isDark ? "text-white" : "text-gray-900"
+											className={`font-semibold mb-2 ${
+												isDark ? "text-white" : "text-gray-800"
 											}`}
 										>
 											Example {i + 1}:
@@ -207,22 +206,32 @@ export const CodeIde = () => {
 											<div>
 												<span
 													className={`${
-														isDark ? "text-gray-400" : "text-gray-600"
+														isDark ? "text-gray-400" : "text-gray-800"
 													}`}
 												>
 													Input:
 												</span>{" "}
-												<code className="text-green-400">{example.input}</code>
+												<code
+													className={`${
+														isDark ? "text-green-400" : "text-green-700"
+													}`}
+												>
+													{example.input}
+												</code>
 											</div>
 											<div>
 												<span
 													className={`${
-														isDark ? "text-gray-400" : "text-gray-600"
+														isDark ? "text-gray-400" : "text-gray-800"
 													}`}
 												>
 													Output:
 												</span>{" "}
-												<code className="text-green-400">
+												<code
+													className={`${
+														isDark ? "text-green-400" : "text-green-700"
+													}`}
+												>
 													{example.expectedOutput}
 												</code>
 											</div>
@@ -278,45 +287,53 @@ export const CodeIde = () => {
 										{jobResult.jobStatus}
 									</span>
 								</h3>
-								{jobResult.stdout && (
-									<div className="mb-2">
-										<div
-											className={`text-xs font-semibold mb-1 ${
-												isDark ? "text-gray-400" : "text-gray-600"
-											}`}
-										>
-											Output:
-										</div>
-										<pre
-											className={`p-2 rounded text-sm font-mono whitespace-pre-wrap ${
-												isDark
-													? "bg-gray-800 text-gray-300"
-													: "bg-gray-200 text-gray-800"
-											}`}
-										>
-											{jobResult.stdout}
-										</pre>
+								{jobResult.jobStatus === "COMPLETED" ? (
+									<div className="text-white font-bold text-lg">
+										PASSED ALL TEST CASES
 									</div>
-								)}
-								{jobResult.stderr && (
-									<div>
-										<div
-											className={`text-xs font-semibold mb-1 ${
-												isDark ? "text-gray-400" : "text-gray-600"
-											}`}
-										>
-											Error:
-										</div>
-										<pre
-											className={`p-2 rounded text-sm font-mono whitespace-pre-wrap ${
-												isDark
-													? "bg-red-900/20 text-red-300"
-													: "bg-red-100 text-red-800"
-											}`}
-										>
-											{jobResult.stderr}
-										</pre>
-									</div>
+								) : (
+									<>
+										{jobResult.stdout && (
+											<div className="mb-2">
+												<div
+													className={`text-xs font-semibold mb-1 ${
+														isDark ? "text-gray-400" : "text-gray-600"
+													}`}
+												>
+													Output:
+												</div>
+												<pre
+													className={`p-2 rounded text-sm font-mono whitespace-pre-wrap ${
+														isDark
+															? "bg-gray-800 text-red-400"
+															: "bg-gray-200 text-red-700"
+													}`}
+												>
+													{jobResult.stdout}
+												</pre>
+											</div>
+										)}
+										{jobResult.stderr && (
+											<div>
+												<div
+													className={`text-xs font-semibold mb-1 ${
+														isDark ? "text-gray-400" : "text-gray-600"
+													}`}
+												>
+													Error:
+												</div>
+												<pre
+													className={`p-2 rounded text-sm font-mono whitespace-pre-wrap ${
+														isDark
+															? "bg-red-900/20 text-red-300"
+															: "bg-red-100 text-red-800"
+													}`}
+												>
+													{jobResult.stderr}
+												</pre>
+											</div>
+										)}
+									</>
 								)}
 							</div>
 						)}
