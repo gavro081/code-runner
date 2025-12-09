@@ -1,13 +1,14 @@
 package com.github.gavro081.codeexecutionservice.config;
 
-import com.github.gavro081.common.events.JobCreatedEvent;
-import com.github.gavro081.common.events.JobStatusEvent;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -15,10 +16,11 @@ import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainer
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.github.gavro081.common.config.RabbitMQConstants.*;
+import static com.github.gavro081.common.config.RabbitMQConstants.EXCHANGE_NAME;
+import static com.github.gavro081.common.config.RabbitMQConstants.JOB_CREATED_ROUTING_KEY;
+import static com.github.gavro081.common.config.RabbitMQConstants.WORKER_QUEUE;
+import com.github.gavro081.common.events.JobCreatedEvent;
+import com.github.gavro081.common.events.JobStatusEvent;
 
 @Configuration
 public class RabbitMQConfig {
@@ -63,9 +65,12 @@ public class RabbitMQConfig {
         configurer.configure(factory, connectionFactory);
 
         factory.setConcurrentConsumers(10);
-//        factory.setMaxConcurrentConsumers(10);
-
-//        factory.setPrefetchCount(15);
+        factory.setMaxConcurrentConsumers(30);
+        // wait 1s before starting a new consumer-worker
+        factory.setStartConsumerMinInterval(1000L);
+        // consumer should be idle for 10 s before stopping
+        factory.setStopConsumerMinInterval(10000L);
+        factory.setPrefetchCount(1);
         return factory;
     }
 }
