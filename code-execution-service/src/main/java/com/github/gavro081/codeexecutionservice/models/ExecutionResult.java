@@ -12,6 +12,6 @@ public class ExecutionResult{
     int exitCode;
 
     public boolean isSuccess(){
-        return exitCode == 0;
+        return exitCode == 0 && "PASSED ALL TEST CASES\n".equals(stdout);
     }
 }

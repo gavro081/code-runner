@@ -71,10 +71,10 @@ function runTests() {
 
 			if (!match) {
 				// print the raw args to help the user debug
-				console.log(`FAILED: Test Case ${i + 1}`);
-				console.log(`Input:    ${JSON.stringify(args)}`);
-				console.log(`Expected: ${JSON.stringify(expected)}`);
-				console.log(`Got:      ${JSON.stringify(result)}`);
+				console.log(`${"FAILED:".padEnd(10)} Test Case ${i + 1}`);
+				console.log(`${"Input:".padEnd(10)} ${JSON.stringify(args)}`);
+				console.log(`${"Expected:".padEnd(10)} ${JSON.stringify(expected)}`);
+				console.log(`${"Got:".padEnd(10)} ${JSON.stringify(result)}`);
 				return;
 			}
 		} catch (e) {

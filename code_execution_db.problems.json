@@ -50,1055 +50,277 @@
 		}
 	},
 	{
-		"_id": "a-phone-code",
-		"difficulty": "EASY",
-		"title": "A Phone Code",
-		"description": "Your task is to calculate the length of the longest common starting sequence (prefix) among a list of phone numbers, which represents the city's phone code.",
+		"_id": "container-with-most-water",
+		"difficulty": "MEDIUM",
+		"title": "Container With Most Water",
+		"methodName": "maxArea",
+		"description": "You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]). Find two lines that together with the x-axis form a container, such that the container contains the most water. Return the maximum amount of water a container can store.",
 		"exampleTestCases": [
 			{
-				"input": "[3, [\"007\", \"00123\", \"00124\"]]",
-				"expectedOutput": "2"
-			},
-			{
-				"input": "[4, [\"12345\", \"123\", \"123987\", \"123456\"]]",
-				"expectedOutput": "3"
+				"input": "[[1, 8, 6, 2, 5, 4, 8, 3, 7]]",
+				"expectedOutput": "49"
 			}
 		],
 		"testCases": [
 			{
-				"input": "[12, [\"5551234\", \"5551235\", \"5551236\", \"5551237\", \"5551238\", \"5551239\", \"5551240\", \"5551241\", \"5551242\", \"5551243\", \"5551244\", \"5551245\"]]",
+				"input": "[[1, 8, 6, 2, 5, 4, 8, 3, 7]]",
+				"expectedOutput": "49"
+			},
+			{
+				"input": "[[1, 1]]",
+				"expectedOutput": "1"
+			},
+			{
+				"input": "[[4, 3, 2, 1, 4]]",
+				"expectedOutput": "16"
+			},
+			{
+				"input": "[[1, 2, 1]]",
+				"expectedOutput": "2"
+			},
+			{
+				"input": "[[2, 3, 4, 5, 18, 17, 6]]",
+				"expectedOutput": "17"
+			}
+		],
+		"assumptions": [
+			"You cannot slant the container",
+			"The area is calculated as the minimum height of the two lines multiplied by the distance between them"
+		],
+		"constraints": [
+			"n == height.length",
+			"2 <= n <= 10⁵",
+			"0 <= height[i] <= 10⁴"
+		],
+		"starterTemplates": {
+			"PYTHON": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        pass",
+			"JAVASCRIPT": "/**\n * @param {number[]} height\n * @return {number}\n */\nvar maxArea = function(height) {\n    \n};"
+		}
+	},
+	{
+		"_id": "merge-sorted-arrays",
+		"difficulty": "MEDIUM",
+		"title": "Merge Sorted Array",
+		"methodName": "merge",
+		"description": "You are given two integer arrays nums1 and nums2, sorted in non-decreasing order, and two integers m and n, representing the number of elements in nums1 and nums2 respectively. Merge nums2 into nums1 as one sorted array. The final sorted array should be stored inside the array nums1.",
+		"exampleTestCases": [
+			{
+				"input": "[[1, 2, 3, 0, 0, 0], 3, [2, 5, 6], 3]",
+				"expectedOutput": "[1, 2, 2, 3, 5, 6]"
+			}
+		],
+		"testCases": [
+			{
+				"input": "[[1, 2, 3, 0, 0, 0], 3, [2, 5, 6], 3]",
+				"expectedOutput": "[1, 2, 2, 3, 5, 6]"
+			},
+			{
+				"input": "[[1], 1, [], 0]",
+				"expectedOutput": "[1]"
+			},
+			{
+				"input": "[[0], 0, [1], 1]",
+				"expectedOutput": "[1]"
+			},
+			{
+				"input": "[[4, 5, 6, 0, 0, 0], 3, [1, 2, 3], 3]",
+				"expectedOutput": "[1, 2, 3, 4, 5, 6]"
+			},
+			{
+				"input": "[[2, 0], 1, [1], 1]",
+				"expectedOutput": "[1, 2]"
+			}
+		],
+		"assumptions": [
+			"nums1 has enough space (size that is equal to m + n) to hold additional elements from nums2",
+			"The elements to be merged start from the beginning of each array"
+		],
+		"constraints": [
+			"nums1.length == m + n",
+			"nums2.length == n",
+			"0 <= m, n <= 200",
+			"1 <= m + n <= 200",
+			"-10⁹ <= nums1[i], nums2[j] <= 10⁹"
+		],
+		"starterTemplates": {
+			"PYTHON": "class Solution:\n    def merge(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:\n        pass",
+			"JAVASCRIPT": "/**\n * @param {number[]} nums1\n * @param {number} m\n * @param {number[]} nums2\n * @param {number} n\n * @return {void}\n */\nvar merge = function(nums1, m, nums2, n) {\n    \n};"
+		}
+	},
+	{
+		"_id": "valid-parentheses",
+		"difficulty": "EASY",
+		"title": "Valid Parentheses",
+		"methodName": "isValid",
+		"description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid. An input string is valid if: open brackets are closed by the same type of brackets, and open brackets are closed in the correct order.",
+		"exampleTestCases": [
+			{
+				"input": "[\"()\"]",
+				"expectedOutput": "true"
+			}
+		],
+		"testCases": [
+			{
+				"input": "[\"()\"]",
+				"expectedOutput": "true"
+			},
+			{
+				"input": "[\"()[]{}\"]",
+				"expectedOutput": "true"
+			},
+			{
+				"input": "[\"(]\"]",
+				"expectedOutput": "false"
+			},
+			{
+				"input": "[\"([)]\"]",
+				"expectedOutput": "false"
+			},
+			{
+				"input": "[\"{[]}\"]",
+				"expectedOutput": "true"
+			}
+		],
+		"assumptions": [
+			"The string only contains the six bracket characters mentioned",
+			"An empty string is considered valid"
+		],
+		"constraints": [
+			"1 <= s.length <= 10⁴",
+			"s consists of parentheses only '()[]{}'."
+		],
+		"starterTemplates": {
+			"PYTHON": "class Solution:\n    def isValid(self, s: str) -> bool:\n        pass",
+			"JAVASCRIPT": "/**\n * @param {string} s\n * @return {boolean}\n */\nvar isValid = function(s) {\n    \n};"
+		}
+	},
+	{
+		"_id": "product-of-array-except-self",
+		"difficulty": "MEDIUM",
+		"title": "Product of Array Except Self",
+		"methodName": "productExceptSelf",
+		"description": "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i]. You must write an algorithm that runs in O(n) time and without using division.",
+		"exampleTestCases": [
+			{
+				"input": "[[1, 2, 3, 4]]",
+				"expectedOutput": "[24, 12, 8, 6]"
+			}
+		],
+		"testCases": [
+			{
+				"input": "[[1, 2, 3, 4]]",
+				"expectedOutput": "[24, 12, 8, 6]"
+			},
+			{
+				"input": "[[2, 3, 4, 5]]",
+				"expectedOutput": "[60, 40, 30, 24]"
+			},
+			{
+				"input": "[[1, 1, 1, 1]]",
+				"expectedOutput": "[1, 1, 1, 1]"
+			},
+			{
+				"input": "[[-1, 1, 0, -3, 3]]",
+				"expectedOutput": "[0, 0, 9, 0, 0]"
+			},
+			{
+				"input": "[[5, 6, 7]]",
+				"expectedOutput": "[42, 35, 30]"
+			}
+		],
+		"assumptions": [
+			"The array length is at least 2",
+			"You may not use division"
+		],
+		"constraints": ["2 <= nums.length <= 10^5", "-30 <= nums[i] <= 30"],
+		"starterTemplates": {
+			"PYTHON": "class Solution:\n    def productExceptSelf(self, nums: List[int]) -> List[int]:\n        pass",
+			"JAVASCRIPT": "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar productExceptSelf = function(nums) {\n    \n};"
+		}
+	},
+	{
+		"_id": "palindrome-number",
+		"difficulty": "EASY",
+		"title": "Palindrome Number",
+		"methodName": "isPalindrome",
+		"description": "Given an integer x, return true if x is a palindrome, and false otherwise.",
+		"exampleTestCases": [
+			{
+				"input": "[121]",
+				"expectedOutput": "true"
+			}
+		],
+		"testCases": [
+			{
+				"input": "[121]",
+				"expectedOutput": "true"
+			},
+			{
+				"input": "[-121]",
+				"expectedOutput": "false"
+			},
+			{
+				"input": "[10]",
+				"expectedOutput": "false"
+			},
+			{
+				"input": "[0]",
+				"expectedOutput": "true"
+			},
+			{
+				"input": "[1221]",
+				"expectedOutput": "true"
+			}
+		],
+		"assumptions": [
+			"The input is a single integer",
+			"Negative numbers are not palindromes"
+		],
+		"constraints": ["-2^31 <= x <= 2^31 - 1"],
+		"starterTemplates": {
+			"PYTHON": "class Solution:\n    def isPalindrome(self, x: int) -> bool:\n        pass",
+			"JAVASCRIPT": "/**\n * @param {number} x\n * @return {boolean}\n */\nvar isPalindrome = function(x) {\n    \n};"
+		}
+	},
+	{
+		"_id": "best-time-to-buy-and-sell-stock",
+		"difficulty": "EASY",
+		"title": "Best Time to Buy and Sell Stock",
+		"methodName": "maxProfit",
+		"description": "You are given an array prices where prices[i] is the price of a given stock on the ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.",
+		"exampleTestCases": [
+			{
+				"input": "[[7,1,5,3,6,4]]",
+				"expectedOutput": "5"
+			}
+		],
+		"testCases": [
+			{
+				"input": "[[7,1,5,3,6,4]]",
 				"expectedOutput": "5"
 			},
 			{
-				"input": "[10, [\"9876543\", \"9876544\", \"9876545\", \"9876546\", \"9876547\", \"9876548\", \"9876549\", \"9876540\", \"9876541\", \"9876542\"]]",
-				"expectedOutput": "6"
-			},
-			{
-				"input": "[15, [\"4441111\", \"4442222\", \"4443333\", \"4444444\", \"4445555\", \"4446666\", \"4447777\", \"4448888\", \"4449999\", \"4440000\", \"4441234\", \"4445678\", \"4449012\", \"4443456\", \"4447890\"]]",
-				"expectedOutput": "3"
-			},
-			{
-				"input": "[11, [\"12345\", \"12346\", \"12347\", \"12348\", \"12349\", \"12340\", \"12341\", \"12342\", \"12343\", \"67890\", \"98765\"]]",
+				"input": "[[7,6,4,3,1]]",
 				"expectedOutput": "0"
 			},
 			{
-				"input": "[14, [\"807123\", \"807124\", \"807125\", \"807126\", \"807127\", \"807128\", \"807129\", \"807130\", \"807131\", \"807132\", \"807133\", \"807134\", \"807135\", \"807136\"]]",
-				"expectedOutput": "4"
+				"input": "[[1,2]]",
+				"expectedOutput": "1"
 			},
 			{
-				"input": "[10, [\"12345\", \"23456\", \"34567\", \"45678\", \"56789\", \"67890\", \"78901\", \"89012\", \"90123\", \"01234\"]]",
-				"expectedOutput": "0"
-			},
-			{
-				"input": "[13, [\"5551234567\", \"5551234568\", \"5551234569\", \"5551234560\", \"5551234561\", \"5551234562\", \"5551234563\", \"5551234564\", \"5551234565\", \"5551234566\", \"5551234577\", \"5551234588\", \"5551234599\"]]",
-				"expectedOutput": "8"
-			},
-			{
-				"input": "[15, [\"3141592653\", \"3141592654\", \"3141592655\", \"3141592656\", \"3141592657\", \"3141592658\", \"3141592659\", \"3141592650\", \"3141592651\", \"3141592652\", \"3141592660\", \"3141592661\", \"3141592662\", \"3141592663\", \"3141592664\"]]",
-				"expectedOutput": "8"
-			},
-			{
-				"input": "[12, [\"9998887770\", \"9998887771\", \"9998887772\", \"9998887773\", \"9998887774\", \"9998887775\", \"9998887776\", \"9998887777\", \"9998887778\", \"9998887779\", \"9998887780\", \"9998887781\"]]",
-				"expectedOutput": "8"
-			},
-			{
-				"input": "[10, [\"1111111111\", \"1111111112\", \"1111111113\", \"1111111114\", \"1111111115\", \"1111111116\", \"1111111117\", \"1111111118\", \"1111111119\", \"1111111110\"]]",
-				"expectedOutput": "9"
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "phoneCode",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def phoneCode(self, n: int, phones: List[str]) -> int:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {number} n\n * @param {string[]} phones\n * @return {number}\n */\nvar phoneCode = function(n, phones) {\n\n};"
-		}
-	},
-	{
-		"_id": "acronyms",
-		"difficulty": "EASY",
-		"title": "Acronyms",
-		"description": "Develop a function that takes a sentence and converts it into its acronym by taking the first letter of each word.",
-		"exampleTestCases": [
-			{
-				"input": "[\"Programming Challenges is really cool\"]",
-				"expectedOutput": "\"PCIRC\""
-			},
-			{
-				"input": "[\"Portable Network Graphics\"]",
-				"expectedOutput": "\"PNG\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[\"Powerful Networked Graphics solutions deliver exceptional visualization capabilities for complex three-dimensional renderings with advanced lighting models that simulate realistic surface properties while optimizing computational resources through sophisticated algorithms designed by leading experts in computer graphics rendering technology across multiple industrial applications.\"]",
-				"expectedOutput": "\"PNGSDEVCCFTDRWALMTSRSPWOCRTSBALDEICRGTAMIA\""
-			},
-			{
-				"input": "[\"Hypertext Transfer Markup Language fundamentally revolutionized digital communications by establishing standardized document formatting protocols that enable cross-platform compatibility across diverse operating systems while supporting embedded media elements alongside interactive scripting capabilities through comprehensive browser-based rendering engines that continuously evolve with advancing web technologies.\"]",
-				"expectedOutput": "\"HTMLFRDCBESTDCPEDSMEISCTCBRETCEWT\""
-			},
-			{
-				"input": "[\"furthermore yesterday's investigation revealed critical market intelligence suggesting significant downward trends affecting quarterly projections across multiple business units particularly within international divisions operating under regulatory constraints while domestic operations continue showing resilience despite supply chain disruptions affecting manufacturing capabilities throughout north american distribution networks.\"]",
-				"expectedOutput": "\"FYIRCMISSDTAQPAMBUPWIDOURWDOCSRDSCDAMCTNDN\""
-			},
-			{
-				"input": "[\" linguistic analysis through sophisticated computational models represents fundamental advancements in natural language processing techniques enabling accurate machine translation systems while improving contextual understanding of semantic relationships between complex sentence structures across multiple languages regardless of syntactic variations commonly encountered in diverse cultural expressions of human communication  \"]",
-				"expectedOutput": "\"LATSCMRFAINLPTEAMTSWICUOSRBCSSACMLROSVCEIDCEHC\""
-			},
-			{
-				"input": "[\"modern software business works through integrated development environments utilizing continuous integration pipelines with automated testing frameworks that enhance code quality while reducing deployment times across distributed systems architectures supporting microservices implementations for scalable enterprise applications requiring minimal downtime during updates throughout production environments.\"]",
-				"expectedOutput": "\"MSBWTIDEVUCIPWATFTECQWRDTADSASMIFSEARMDDUTE\""
-			},
-			{
-				"input": "[\"Automated System Workflows dramatically improve organizational efficiency by streamlining repetitive business processes through intelligent routing mechanisms that distribute tasks according to established priority levels while monitoring completion metrics against predetermined benchmarks ensuring optimal resource allocation throughout departments regardless of geographical distribution across multiple international office locations.\"]",
-				"expectedOutput": "\"ASWDIOEBSRBPTIRMTDTATEPLWMCMAPBESORTDROGDAMI\""
-			},
-			{
-				"input": "[\"PHP: Hypertext Preprocessor remains remarkably relevant in modern web development ecosystems despite emerging alternatives because its extensive library ecosystem provides developers with battle-tested solutions for common challenges while maintaining backward compatibility across versions ensuring legacy applications continue functioning alongside newer implementations throughout evolving technology landscapes.\"]",
-				"expectedOutput": "\"PHPRRIMWDEDAEBITELPDBTSCCWMBCAVELALCFANITEL\""
-			},
-			{
-				"input": "[\"Fundamental Information Flow Operations represent critical architectural components in distributed computing systems where data sequencing maintains transactional integrity throughout asynchronous processing environments while preventing race conditions that could otherwise compromise system stability during peak operational periods requiring careful implementation considerations especially within memory-constrained embedded computing platforms.\"]",
-				"expectedOutput": "\"FIFOERCACIDCSWTMTITAPEPRCTCOCSSPOPRCICCEWM\""
-			},
-			{
-				"input": "[\"Accelerated System Architecture Processing technology delivers unprecedented computational throughput for data-intensive applications requiring real-time analysis of streaming information sources while maintaining exceptionally low latency responses necessary for mission-critical operations where millisecond delays could potentially result in significant financial implications or compromised safety protocols within industrial control systems.\"]",
-				"expectedOutput": "\"ASAPTDUCTFDIARRTASISWMELLRNFMCWMDCPRIFSICPWIS\""
-			},
-			{
-				"input": "[\"wireless wide networks 1st generation 2nd generation 3rd generation technologies evolved dramatically through decades of telecommunications research establishing foundations for modern connectivity paradigms while overcoming significant technical limitations through innovative spectrum utilization techniques alongside increasingly sophisticated modulation approaches that maximize data throughput within constrained bandwidth allocations supporting exponential growth in connected devices worldwide.\"]",
-				"expectedOutput": "\"WWN123GETDTDOTREFMCPWOSTLTISUTALISMTWCBANNCE\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def acronym(self, sentence: str) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {string} sentence\n * @return {string}\n */\nvar acronym = function(sentence) {\n\n};"
-		},
-		"methodName": "acronyms"
-	},
-	{
-		"_id": "caesar-cipher",
-		"difficulty": "EASY",
-		"title": "Caesar Cipher",
-		"description": "Implement a function that encrypts a message using the Caesar cipher technique, which involves shifting each letter of the alphabet by a specified number of places.",
-		"exampleTestCases": [
-			{
-				"input": "[\"ANTHONY\", -3]",
-				"expectedOutput": "\"XKQELKV\""
-			},
-			{
-				"input": "[\"JULIUS CAESAR\", 3]",
-				"expectedOutput": "\"MXOLXV FDHVDU\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[\"HELLO\", 3]",
-				"expectedOutput": "\"KHOOR\""
-			},
-			{
-				"input": "[\"XYZ\", 3]",
-				"expectedOutput": "\"ABC\""
-			},
-			{
-				"input": "[\"ABC\", -3]",
-				"expectedOutput": "\"XYZ\""
-			},
-			{
-				"input": "[\"The quick brown fox jumps over the lazy dog\", 13]",
-				"expectedOutput": "\"Gur dhvpx oebja sbk whzcf bire gur ynml qbt\""
-			},
-			{
-				"input": "[\"middle-Outz\", 2]",
-				"expectedOutput": "\"okffng-Qwvb\""
-			},
-			{
-				"input": "[\"No Change\", 0]",
-				"expectedOutput": "\"No Change\""
-			},
-			{
-				"input": "[\"Big shift!\", 75]",
-				"expectedOutput": "\"Elj vkliw!\""
-			},
-			{
-				"input": "[\"Negative Wrap!\", -2]",
-				"expectedOutput": "\"LcEXPLGTc YpYn!\""
-			},
-			{
-				"input": "[\"Veni, Vidi, Vici\", -10]",
-				"expectedOutput": "\"Ludq, Lsds, Lsgs\""
-			},
-			{
-				"input": "[\"All lowercase\", 5]",
-				"expectedOutput": "\"Fqq qtbjwhfxj\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "caesarCipher",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def caesarCipher(self, message: str, shift: int) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {string} message\n * @param {number} shift\n * @return {string}\n */\nvar caesarCipher = function(message, shift) {\n\n};"
-		}
-	},
-	{
-		"_id": "cakes",
-		"difficulty": "EASY",
-		"title": "Cakes",
-		"description": "You need to determine the maximum number of cakes you can bake given a list of required ingredients per cake and the quantities of those ingredients you currently possess.Line 1: Single integer N for the number of ingredients. N next lines: One for each ingredient. Each of these lines contains two positive integers: the first one is the required quantity of this ingredient per cake, the second one is the quantity of this ingredient you have in your kitchen.",
-		"exampleTestCases": [
-			{
-				"input": "[3, [\"100 500\", \"2 5\", \"70 1000\"]]",
+				"input": "[[2,4,1]]",
 				"expectedOutput": "2"
 			},
 			{
-				"input": "[3, [\"100 50\", \"2 5\", \"70 1000\"]]",
-				"expectedOutput": "0"
+				"input": "[[3,2,6,5,0,3]]",
+				"expectedOutput": "4"
 			}
 		],
-		"testCases": [
-			{
-				"input": "[10, [\"2 20\", \"3 33\", \"5 100\", \"7 77\", \"11 121\", \"13 130\", \"17 170\", \"19 190\", \"23 230\", \"29 290\"]]",
-				"expectedOutput": "10"
-			},
-			{
-				"input": "[12, [\"1 1000\", \"2 2000\", \"3 3000\", \"4 4000\", \"5 5000\", \"6 6000\", \"7 7000\", \"8 8000\", \"9 9000\", \"10 10000\", \"11 11000\", \"12 12000\"]]",
-				"expectedOutput": "83"
-			},
-			{
-				"input": "[15, [\"100 1000\", \"200 1500\", \"300 900\", \"400 800\", \"500 2500\", \"600 3600\", \"700 4900\", \"800 6400\", \"900 8100\", \"1000 10000\", \"1100 12100\", \"1200 14400\", \"1300 16900\", \"1400 19600\", \"1500 22500\"]]",
-				"expectedOutput": "3"
-			},
-			{
-				"input": "[18, [\"5 100\", \"10 200\", \"15 300\", \"20 400\", \"25 500\", \"30 600\", \"35 700\", \"40 800\", \"45 900\", \"50 1000\", \"55 1100\", \"60 1200\", \"65 1300\", \"70 1400\", \"75 1500\", \"80 1600\", \"85 1700\", \"90 1800\"]]",
-				"expectedOutput": "20"
-			},
-			{
-				"input": "[14, [\"7 70\", \"14 140\", \"21 210\", \"28 280\", \"35 350\", \"42 420\", \"49 490\", \"56 560\", \"63 630\", \"70 700\", \"77 770\", \"84 840\", \"91 910\", \"98 980\"]]",
-				"expectedOutput": "10"
-			},
-			{
-				"input": "[11, [\"100 1000\", \"200 2000\", \"300 3000\", \"400 4000\", \"500 5000\", \"600 6000\", \"700 7000\", \"800 8000\", \"900 9000\", \"1000 10000\", \"1100 11000\"]]",
-				"expectedOutput": "10"
-			},
-			{
-				"input": "[13, [\"2 100\", \"3 150\", \"4 200\", \"5 250\", \"6 300\", \"7 350\", \"8 400\", \"9 450\", \"10 500\", \"11 550\", \"12 600\", \"13 650\", \"14 700\"]]",
-				"expectedOutput": "50"
-			},
-			{
-				"input": "[16, [\"1 100\", \"2 200\", \"3 300\", \"4 400\", \"5 500\", \"6 600\", \"7 700\", \"8 800\", \"9 900\", \"10 1000\", \"11 1100\", \"12 1200\", \"13 1300\", \"14 1400\", \"15 1500\", \"16 1600\"]]",
-				"expectedOutput": "100"
-			},
-			{
-				"input": "[17, [\"10 100\", \"20 200\", \"30 300\", \"40 400\", \"50 500\", \"60 600\", \"70 700\", \"80 800\", \"90 900\", \"100 1000\", \"110 1100\", \"120 1200\", \"130 1300\", \"140 1400\", \"150 1500\", \"160 1600\", \"170 1700\"]]",
-				"expectedOutput": "10"
-			},
-			{
-				"input": "[20, [\"1 1000\", \"2 2000\", \"3 3000\", \"4 4000\", \"5 5000\", \"6 6000\", \"7 7000\", \"8 8000\", \"9 9000\", \"10 10000\", \"11 11000\", \"12 12000\", \"13 13000\", \"14 14000\", \"15 15000\", \"16 16000\", \"17 17000\", \"18 18000\", \"19 19000\", \"20 20000\"]]",
-				"expectedOutput": "50"
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "cakes",
+		"assumptions": ["You cannot sell a stock before you buy one."],
+		"constraints": ["1 <= prices.length <= 10⁵", "0 <= prices[i] <= 10⁴"],
 		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def cakes(self, n: int, ingredients: List[str]) -> int:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {number} n\n * @param {string[]} ingredients\n * @return {number}\n */\nvar cakes = function(n, ingredients) {\n\n};"
-		}
-	},
-	{
-		"_id": "consecutive-numbers",
-		"difficulty": "MEDIUM",
-		"title": "Consecutive Numbers",
-		"description": "Design a function that identifies and returns all sequences of consecutive integers within a given list of numbers. The required length for a sequence to be considered 'consecutive' is given as the first input. Note that output sequences can contain numbers which are not consecutive in the input list",
-		"exampleTestCases": [
-			{
-				"input": "[2, \"5 ; 1 ; 2 ; 3 ; 8 ; -5 ; -4 ; 7\"]",
-				"expectedOutput": "\"1 ; 2\\n2 ; 3\\n-5 ; -4\""
-			},
-			{
-				"input": "[3, \"5 ; 1 ; 2 ; 3 ; 8 ; -5 ; -4 ; 7\"]",
-				"expectedOutput": "\"1 ; 2 ; 3\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[3, \"10 1 5 2 6 3 7 4 8\"]",
-				"expectedOutput": "\"1 2 3\\n2 3 4\\n3 4 5\\n4 5 6\\n5 6 7\\n6 7 8\""
-			},
-			{
-				"input": "[4, \"-5 0 -4 1 -3 2 -2 3 -1\"]",
-				"expectedOutput": "\"-5 -4 -3 -2\\n-4 -3 -2 -1\\n-3 -2 -1 0\\n-2 -1 0 1\\n-1 0 1 2\\n0 1 2 3\""
-			},
-			{
-				"input": "[2, \"100 50 101 51 102 52 103\"]",
-				"expectedOutput": "\"50 51\\n51 52\\n100 101\\n101 102\\n102 103\""
-			},
-			{
-				"input": "[5, \"20 1 19 2 18 3 17 4 16 5 15\"]",
-				"expectedOutput": "\"1 2 3 4 5\\n15 16 17 18 19\\n16 17 18 19 20\""
-			},
-			{
-				"input": "[3, \"0 10 -1 9 -2 8 -3 7 -4 6 -5\"]",
-				"expectedOutput": "\"-5 -4 -3\\n-4 -3 -2\\n-3 -2 -1\\n6 7 8\\n7 8 9\\n8 9 10\""
-			},
-			{
-				"input": "[4, \"7 1 8 2 9 3 10 4 11 5 12 6\"]",
-				"expectedOutput": "\"1 2 3 4\\n2 3 4 5\\n3 4 5 6\\n7 8 9 10\\n8 9 10 11\\n9 10 11 12\""
-			},
-			{
-				"input": "[2, \"1 10 2 9 3 8 4 7 5 6\"]",
-				"expectedOutput": "\"1 2\\n2 3\\n3 4\\n4 5\\n5 6\\n6 7\\n7 8\\n8 9\\n9 10\""
-			},
-			{
-				"input": "[6, \"-10 0 -9 1 -8 2 -7 3 -6 4 -5 5 -4\"]",
-				"expectedOutput": "\"-10 -9 -8 -7 -6 -5\\n-9 -8 -7 -6 -5 -4\\n0 1 2 3 4 5\""
-			},
-			{
-				"input": "[3, \"50 40 30 51 41 31 52 42 32 53 43 33\"]",
-				"expectedOutput": "\"30 31 32\\n31 32 33\\n40 41 42\\n41 42 43\\n50 51 52\\n51 52 53\""
-			},
-			{
-				"input": "[4, \"15 1 14 2 13 3 12 4 11 5 10 6 9 7 8\"]",
-				"expectedOutput": "\"1 2 3 4\\n2 3 4 5\\n3 4 5 6\\n4 5 6 7\\n5 6 7 8\\n6 7 8 9\\n7 8 9 10\\n8 9 10 11\\n9 10 11 12\\n10 11 12 13\\n11 12 13 14\\n12 13 14 15\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "consecutiveNumbers",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def consecutiveNumbers(self, k: int, numbers: str) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {number} k\n * @param {string} numbers\n * @return {string}\n */\nvar consecutiveNumbers = function(k, numbers) {\n\n};"
-		}
-	},
-	{
-		"_id": "fibonacci",
-		"difficulty": "EASY",
-		"title": "Fibonacci",
-		"description": "Your goal is to build a function that generates an array containing a specified quantity of Fibonacci numbers. The Fibonacci sequence starts with 0 and 1, and each subsequent number is the sum of the two preceding ones.",
-		"exampleTestCases": [
-			{
-				"input": "[8]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13]"
-			},
-			{
-				"input": "[14]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233]"
-			}
-		],
-		"testCases": [
-			{
-				"input": "[25]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368]"
-			},
-			{
-				"input": "[30]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229]"
-			},
-			{
-				"input": "[18]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597]"
-			},
-			{
-				"input": "[22]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946]"
-			},
-			{
-				"input": "[35]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269, 2178309, 3524578, 5702887]"
-			},
-			{
-				"input": "[12]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]"
-			},
-			{
-				"input": "[28]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418]"
-			},
-			{
-				"input": "[16]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610]"
-			},
-			{
-				"input": "[33]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269, 2178309]"
-			},
-			{
-				"input": "[19]",
-				"expectedOutput": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584]"
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "fibonacci",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def fibonacci(self, n: int) -> List[int]:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {number} n\n * @return {number[]}\n */\nvar fibonacci = function(n) {\n\n};"
-		}
-	},
-	{
-		"_id": "first-non-repeating-character",
-		"difficulty": "MEDIUM",
-		"title": "First Non Repeating Character",
-		"description": "Write a function to find the first character in a string that does not appear again in that string. If every character is repeated, the function should return an empty string.",
-		"exampleTestCases": [
-			{
-				"input": "[\"stress\"]",
-				"expectedOutput": "\"'t'\""
-			},
-			{
-				"input": "[\"aabbcce\"]",
-				"expectedOutput": "\"'e'\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[\"abacabadabacabadabacabaeabacabadabacabadabacabadabacabad\"]",
-				"expectedOutput": "\"'e'\""
-			},
-			{
-				"input": "[\"abcdefghijklmnopqrstuvwxyzzyxwvutsrqponmlkjihgfedcbaabcdefghijklmnopqrstuvwxy1z\"]",
-				"expectedOutput": "\"'1'\""
-			},
-			{
-				"input": "[\"thequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogx\"]",
-				"expectedOutput": "\"'x'\""
-			},
-			{
-				"input": "[\"aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzzabcdefghijklmnopqrstuvwxyz\"]",
-				"expectedOutput": "\"'a'\""
-			},
-			{
-				"input": "[\"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyx\"]",
-				"expectedOutput": "\"'x'\""
-			},
-			{
-				"input": "[\"1bcdefghijklmnopqrstuvwxyzaabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz\"]",
-				"expectedOutput": "\"'1'\""
-			},
-			{
-				"input": "[\"abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcf\"]",
-				"expectedOutput": "\"'f'\""
-			},
-			{
-				"input": "[\"qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmz\"]",
-				"expectedOutput": "\"'z'\""
-			},
-			{
-				"input": "[\"xxyyzzwwvvuuttssrrqqppoonnmmllkkjjiihhggffeeddccbbaa1\"]",
-				"expectedOutput": "\"'1'\""
-			},
-			{
-				"input": "[\"mnbvcxzlkjhgfdsapoiuytrewqmnbvcxzlkjhgfdsapoiuytrewqx\"]",
-				"expectedOutput": "\"'x'\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "firstNonRepeating",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def firstNonRepeating(self, s: str) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {string} s\n * @return {string}\n */\nvar firstNonRepeating = function(s) {\n\n};"
-		}
-	},
-	{
-		"_id": "fizzbuzz",
-		"difficulty": "EASY",
-		"title": "FizzBuzz",
-		"description": "Write a program that prints the numbers from 1 to `n` but:\n\n- if number is divisible by 3, print `Fizz`\n- if number is divisible by 5, print `Buzz`\n- if number is divisible by both 3 and 5, print `FizzBuzz`\n- otherwise print the number",
-		"exampleTestCases": [
-			{
-				"input": "[5]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\""
-			},
-			{
-				"input": "[15]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[80]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\""
-			},
-			{
-				"input": "[85]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\\nFizz\\n82\\n83\\nFizz\\nBuzz\""
-			},
-			{
-				"input": "[90]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\\nFizz\\n82\\n83\\nFizz\\nBuzz\\n86\\nFizz\\n88\\n89\\nFizzBuzz\""
-			},
-			{
-				"input": "[95]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\\nFizz\\n82\\n83\\nFizz\\nBuzz\\n86\\nFizz\\n88\\n89\\nFizzBuzz\\n91\\n92\\nFizz\\n94\\nBuzz\""
-			},
-			{
-				"input": "[100]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\\nFizz\\n82\\n83\\nFizz\\nBuzz\\n86\\nFizz\\n88\\n89\\nFizzBuzz\\n91\\n92\\nFizz\\n94\\nBuzz\\nFizz\\n97\\n98\\nFizz\\nBuzz\""
-			},
-			{
-				"input": "[82]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\\nFizz\""
-			},
-			{
-				"input": "[87]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\\nFizz\\n82\\n83\\nFizz\\nBuzz\\n86\\nFizz\""
-			},
-			{
-				"input": "[92]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\\nFizz\\n82\\n83\\nFizz\\nBuzz\\n86\\nFizz\\n88\\n89\\nFizzBuzz\\n91\\n92\""
-			},
-			{
-				"input": "[97]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\\nFizz\\n82\\n83\\nFizz\\nBuzz\\n86\\nFizz\\n88\\n89\\nFizzBuzz\\n91\\n92\\nFizz\\n94\\nBuzz\\nFizz\\n97\""
-			},
-			{
-				"input": "[99]",
-				"expectedOutput": "\"1\\n2\\nFizz\\n4\\nBuzz\\nFizz\\n7\\n8\\nFizz\\nBuzz\\n11\\nFizz\\n13\\n14\\nFizzBuzz\\n16\\n17\\nFizz\\n19\\nBuzz\\nFizz\\n22\\n23\\nFizz\\nBuzz\\n26\\nFizz\\n28\\n29\\nFizzBuzz\\n31\\n32\\nFizz\\n34\\nBuzz\\nFizz\\n37\\n38\\nFizz\\nBuzz\\n41\\nFizz\\n43\\n44\\nFizzBuzz\\n46\\n47\\nFizz\\n49\\nBuzz\\nFizz\\n52\\n53\\nFizz\\nBuzz\\n56\\nFizz\\n58\\n59\\nFizzBuzz\\n61\\n62\\nFizz\\n64\\nBuzz\\nFizz\\n67\\n68\\nFizz\\nBuzz\\n71\\nFizz\\n73\\n74\\nFizzBuzz\\n76\\n77\\nFizz\\n79\\nBuzz\\nFizz\\n82\\n83\\nFizz\\nBuzz\\n86\\nFizz\\n88\\n89\\nFizzBuzz\\n91\\n92\\nFizz\\n94\\nBuzz\\nFizz\\n97\\n98\\nFizz\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "fizzBuzz",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def fizzBuzz(self, n: int) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {number} n\n * @return {string}\n */\nvar fizzBuzz = function(n) {\n\n};"
-		}
-	},
-	{
-		"_id": "frequency-deviation",
-		"difficulty": "HARD",
-		"title": "Frequency Deviation",
-		"description": "Given a string consisting of lowercase English letters, we define the frequency deviation of a substring as the difference between the maximum and the minimum frequencies of the characters in that substring.\n\nA substring of a string is formed by any contiguous segment of the string. For example, given \"bbacccc\", the character appearing most frequently is 'c' with 4 occurrences. The character that appears the fewest times is 'a' with 1 occurrence. The frequency deviation of the entire string is 4 - 1 = 3.\n\nGiven a string, s, representing the input string, find the maximum possible frequency deviation of any of its substrings.",
-		"exampleTestCases": [
-			{
-				"input": "[\"bbacccc\"]",
-				"expectedOutput": "3"
-			},
-			{
-				"input": "[\"aabbcc\"]",
-				"expectedOutput": "1"
-			}
-		],
-		"testCases": [
-			{
-				"input": "[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbc\"]",
-				"expectedOutput": "39"
-			},
-			{
-				"input": "[\"cccccccccccccccccccccccccccccccccccccccccccccbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]",
-				"expectedOutput": "44"
-			},
-			{
-				"input": "[\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccccccccccccccccccccddddd\"]",
-				"expectedOutput": "29"
-			},
-			{
-				"input": "[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbcccccccccccccdddddddddd\"]",
-				"expectedOutput": "49"
-			},
-			{
-				"input": "[\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeebbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaacccccddddd\"]",
-				"expectedOutput": "34"
-			},
-			{
-				"input": "[\"ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbaaaaaaaaaadddddddddd\"]",
-				"expectedOutput": "59"
-			},
-			{
-				"input": "[\"aaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbccccccccccccccccccccddddddddddddddddddddeeeeeeeeeeeeeeeeeeee\"]",
-				"expectedOutput": "19"
-			},
-			{
-				"input": "[\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaccccccccccccccccccccddddddddddeeeee\"]",
-				"expectedOutput": "54"
-			},
-			{
-				"input": "[\"ddddddddddddddddddddddddddddddddddddddddbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacee\"]",
-				"expectedOutput": "39"
-			},
-			{
-				"input": "[\"aaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccccccccddddddddddddddddddddddddd\"]",
-				"expectedOutput": "24"
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "frequencyDeviation",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def frequencyDeviation(self, s: str) -> int:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {string} s\n * @return {number}\n */\nvar frequencyDeviation = function(s) {\n\n};"
-		}
-	},
-	{
-		"_id": "heap-algorithm",
-		"difficulty": "MEDIUM",
-		"title": "Heap Algorithm",
-		"description": "Write a program that generates all possible unique permutations of a string.\n\nThe order of the generated permutations is important, see the example below.",
-		"exampleTestCases": [
-			{
-				"input": "[\"abc\"]",
-				"expectedOutput": "\"abc\\nbac\\ncab\\nacb\\nbca\\ncba\""
-			},
-			{
-				"input": "[\"ab\"]",
-				"expectedOutput": "\"ab\\nba\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[\"abcd\"]",
-				"expectedOutput": "\"abcd\\nbacd\\ncbad\\nacbd\\nbcad\\ncabd\\nabdc\\nbadc\\ncbda\\nacdb\\nbcda\\ncdab\\nadcb\\nbdca\\ncdba\\nadbc\\nbdac\\ncadb\\ndabc\\ndbac\\ndcba\\nadcb\\nbdca\\ncdab\""
-			},
-			{
-				"input": "[\"efgh\"]",
-				"expectedOutput": "\"efgh\\nfegh\\nhgef\\ngefh\\nfgeh\\nhgei\\nefhg\\nfehg\\nhgei\\ngehf\\nfheg\\nhgef\\neghf\\nfegh\\nhgef\\ngefh\\nfgeh\\nhgei\\nefgh\\nfegh\\nhgef\\ngefh\\nfgeh\\nhgei\""
-			},
-			{
-				"input": "[\"abcde\"]",
-				"expectedOutput": "\"abcde\\nbacde\\ncbade\\nacbde\\nbcade\\ncabde\\nabced\\nbaced\\ncbaed\\nacbed\\nbcaed\\ncbaed\\nabecd\\nbaecd\\ncbead\\nacebd\\nbcead\\ncbead\\nabedc\\nbaedc\\ncbeda\\nacedb\\nbceda\\ncedab\""
-			},
-			{
-				"input": "[\"fghi\"]",
-				"expectedOutput": "\"fghi\\ngfhi\\nhfgi\\nifgh\\ngfih\\nhgif\\nifgh\\nfigh\\nhfgi\\ngfih\\nhgif\\nifgh\\nfihg\\ngifh\\nhigf\\nifhg\\ngifh\\nhigf\\nfghi\\ngfhi\\nhfgi\\nifgh\\ngfih\\nhgif\""
-			},
-			{
-				"input": "[\"xyz\"]",
-				"expectedOutput": "\"xyz\\nyzx\\nzxy\\nxzy\\nyzx\\nzyx\""
-			},
-			{
-				"input": "[\"pqrst\"]",
-				"expectedOutput": "\"pqrst\\nqp.rst\\nrpqst\\nspqrt\\ntpqrs\\nqprst\\nrpqts\\nsprqt\\ntprqs\\npqrts\\nrqpst\\nsqprt\\ntpqrs\\npqsrt\\nrqspt\\nsqrpt\\ntqprs\\npqrts\\nrqpst\\nsqprt\\ntpqrs\\nqprts\\nrqpst\\nsqprt\""
-			},
-			{
-				"input": "[\"klmn\"]",
-				"expectedOutput": "\"klmn\\nlkmn\\nmklm\\nnklm\\nlmkn\\nmlkn\\nnlkm\\nkmln\\nmklm\\nlkmn\\nmnlk\\nnmlk\\nknml\\nlnkm\\nmnkl\\nnklm\\nlmkn\\nmlkn\\nknlm\\nlnkm\\nmnkl\\nnklm\\nlmkn\\nmlkn\""
-			},
-			{
-				"input": "[\"uvwxy\"]",
-				"expectedOutput": "\"uvwxy\\nvuwxy\\nwuvxy\\nxuvwy\\nyuvwx\\nvuwxy\\nwvuxy\\nxvwuy\\nyvwux\\nuwvxy\\nwuvxy\\nxwuvy\\nywuvx\\nuxwvy\\nwxuvy\\nxuwvy\\nyuwvx\\nuywvx\\nwyuvx\\nxywuv\\nyxwuv\\nuyxwv\\nwyxuv\\nxywuv\""
-			},
-			{
-				"input": "[\"rst\"]",
-				"expectedOutput": "\"rst\\nsrt\\ntsr\\nrts\\nstr\\ntrs\""
-			},
-			{
-				"input": "[\"abcdef\"]",
-				"expectedOutput": "\"abcdef\\nbacdef\\ncbadef\\nacbdef\\nbcadef\\ncabdef\\nabcedf\\nbacedf\\ncbaedf\\nacbedf\\nbcaedf\\ncbaedf\\nabecdf\\nbaecdf\\ncbeadf\\nacebdf\\nbceadf\\ncbeadf\\nabedcf\\nbaedcf\\ncbedaf\\nacedbf\\nbcedaf\\ncedabf\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "heapAlgorithm",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def heapAlgorithm(self, s: str) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {string} s\n * @return {string}\n */\nvar heapAlgorithm = function(s) {\n\n};"
-		}
-	},
-	{
-		"_id": "look-and-say-sequence-conway",
-		"difficulty": "MEDIUM",
-		"title": "Look And Say Sequence Conway",
-		"description": "In mathematics, the look-and-say sequence is the sequence of integers beginning as follows: 1, 11, 21, 1211, 111221, 312211, 13112221, 1113213211... To generate a member of the sequence from the previous member, read off the digits of the previous member, counting the number of digits in groups of the same digit. For example:\n11 is read off as 'one 1' or 11.\n 11 is read off as 'two 1s' or 21.\n 21  is read off as 'one 2, then one 1' or 1211.\n 1211  is read off as 'one 1, one 2, then two 1s' or 111221.\n 111221 is read off as 'three 1s, two 2s, then one 1' or 312211.Write a program that prints the next term of the look-and-say sequence.",
-		"exampleTestCases": [
-			{
-				"input": "[11]",
-				"expectedOutput": "21"
-			},
-			{
-				"input": "[1211]",
-				"expectedOutput": "111221"
-			}
-		],
-		"testCases": [
-			{
-				"input": "[1113122113121113222123211211131211121311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "3113112221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			},
-			{
-				"input": "[3113112221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "1321132132211331121321231231121121311221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			},
-			{
-				"input": "[1321132132211331121321231231121121311221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "1113122113121113222123211211131211121311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			},
-			{
-				"input": "[1113122113121113222123211211131211121311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "3113112221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			},
-			{
-				"input": "[3113112221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "1321132132211331121321231231121121311221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			},
-			{
-				"input": "[1321132132211331121321231231121121311221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "1113122113121113222123211211131211121311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			},
-			{
-				"input": "[1113122113121113222123211211131211121311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "3113112221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			},
-			{
-				"input": "[3113112221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "1321132132211331121321231231121121311221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			},
-			{
-				"input": "[1321132132211331121321231231121121311221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "1113122113121113222123211211131211121311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			},
-			{
-				"input": "[1113122113121113222123211211131211121311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221]",
-				"expectedOutput": "3113112221131112311332111213122112311311123112111331121113122112132113121113222112311311221112132113211321321123123211311222112111312211311123113321112132113211332112111312211311123113321112132113211332211213211322311211131221131112311311222113111231133211321123113112221133112132123123112111311222112132113211321322112311311222113311213212322211231131122211311123113321112132113211312311211131221"
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "lookAndSay",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def lookAndSay(self, term: str) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {string} term\n * @return {string}\n */\nvar lookAndSay = function(term) {\n\n};"
-		}
-	},
-	{
-		"_id": "rotate-2-dimensional-array-90-degrees",
-		"difficulty": "MEDIUM",
-		"title": "Rotate 2 Dimensional Array 90 Degrees",
-		"description": "Given a square/rectangle matrix representing an image and a direction of rotation (`clockwise` or `anticlockwise`), rotate the image by 90 degrees.",
-		"exampleTestCases": [
-			{
-				"input": "[\"clockwise\", \"1 2 3\\n4 5 6\\n7 8 9\"]",
-				"expectedOutput": "\"7 4 1\\n8 5 2\\n9 6 3\""
-			},
-			{
-				"input": "[\"anticlockwise\", \"1 2 3\\n4 5 6\\n7 8 9\"]",
-				"expectedOutput": "\"3 6 9\\n2 5 8\\n1 4 7\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[\"clockwise\", \"1 2 3 4 5 6\\n7 8 9 10 11 12\\n13 14 15 16 17 18\\n19 20 21 22 23 24\\n25 26 27 28 29 30\"]",
-				"expectedOutput": "\"25 19 13 7 1\\n26 20 14 8 2\\n27 21 15 9 3\\n28 22 16 10 4\\n29 23 17 11 5\\n30 24 18 12 6\""
-			},
-			{
-				"input": "[\"anticlockwise\", \"1 2 3 4 5 6\\n7 8 9 10 11 12\\n13 14 15 16 17 18\\n19 20 21 22 23 24\\n25 26 27 28 29 30\"]",
-				"expectedOutput": "\"6 12 18 24 30\\n5 11 17 23 29\\n4 10 16 22 28\\n3 9 15 21 27\\n2 8 14 20 26\\n1 7 13 19 25\""
-			},
-			{
-				"input": "[\"clockwise\", \"1 2 3 4 5\\n6 7 8 9 10\\n11 12 13 14 15\\n16 17 18 19 20\\n21 22 23 24 25\\n26 27 28 29 30\"]",
-				"expectedOutput": "\"26 21 16 11 6 1\\n27 22 17 12 7 2\\n28 23 18 13 8 3\\n29 24 19 14 9 4\\n30 25 20 15 10 5\""
-			},
-			{
-				"input": "[\"anticlockwise\", \"1 2 3 4 5\\n6 7 8 9 10\\n11 12 13 14 15\\n16 17 18 19 20\\n21 22 23 24 25\\n26 27 28 29 30\"]",
-				"expectedOutput": "\"5 10 15 20 25 30\\n4 9 14 19 24 29\\n3 8 13 18 23 28\\n2 7 12 17 22 27\\n1 6 11 16 21 26\""
-			},
-			{
-				"input": "[\"clockwise\", \"1 2 3 4 5 6 7\\n8 9 10 11 12 13 14\\n15 16 17 18 19 20 21\\n22 23 24 25 26 27 28\\n29 30 31 32 33 34 35\"]",
-				"expectedOutput": "\"29 22 15 8 1\\n30 23 16 9 2\\n31 24 17 10 3\\n32 25 18 11 4\\n33 26 19 12 5\\n34 27 20 13 6\\n35 28 21 14 7\""
-			},
-			{
-				"input": "[\"anticlockwise\", \"1 2 3 4 5 6 7\\n8 9 10 11 12 13 14\\n15 16 17 18 19 20 21\\n22 23 24 25 26 27 28\\n29 30 31 32 33 34 35\"]",
-				"expectedOutput": "\"7 14 21 28 35\\n6 13 20 27 34\\n5 12 19 26 33\\n4 11 18 25 32\\n3 10 17 24 31\\n2 9 16 23 30\\n1 8 15 22 29\""
-			},
-			{
-				"input": "[\"clockwise\", \"1 2 3 4 5\\n6 7 8 9 10\\n11 12 13 14 15\\n16 17 18 19 20\\n21 22 23 24 25\\n26 27 28 29 30\\n31 32 33 34 35\"]",
-				"expectedOutput": "\"31 26 21 16 11 6 1\\n32 27 22 17 12 7 2\\n33 28 23 18 13 8 3\\n34 29 24 19 14 9 4\\n35 30 25 20 15 10 5\""
-			},
-			{
-				"input": "[\"anticlockwise\", \"1 2 3 4 5\\n6 7 8 9 10\\n11 12 13 14 15\\n16 17 18 19 20\\n21 22 23 24 25\\n26 27 28 29 30\\n31 32 33 34 35\"]",
-				"expectedOutput": "\"5 10 15 20 25 30 35\\n4 9 14 19 24 29 34\\n3 8 13 18 23 28 33\\n2 7 12 17 22 27 32\\n1 6 11 16 21 26 31\""
-			},
-			{
-				"input": "[\"clockwise\", \"1 2 3 4 5 6\\n7 8 9 10 11 12\\n13 14 15 16 17 18\\n19 20 21 22 23 24\\n25 26 27 28 29 30\\n31 32 33 34 35 36\"]",
-				"expectedOutput": "\"31 25 19 13 7 1\\n32 26 20 14 8 2\\n33 27 21 15 9 3\\n34 28 22 16 10 4\\n35 29 23 17 11 5\\n36 30 24 18 12 6\""
-			},
-			{
-				"input": "[\"anticlockwise\", \"1 2 3 4 5 6\\n7 8 9 10 11 12\\n13 14 15 16 17 18\\n19 20 21 22 23 24\\n25 26 27 28 29 30\\n31 32 33 34 35 36\"]",
-				"expectedOutput": "\"6 12 18 24 30 36\\n5 11 17 23 29 35\\n4 10 16 22 28 34\\n3 9 15 21 27 33\\n2 8 14 20 26 32\\n1 7 13 19 25 31\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "rotateMatrix",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def rotateMatrix(self, direction: str, matrix: str) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {string} direction\n * @param {string} matrix\n * @return {string}\n */\nvar rotateMatrix = function(direction, matrix) {\n\n};"
-		}
-	},
-	{
-		"_id": "signal-path-through-the-underground-network",
-		"difficulty": "MEDIUM",
-		"title": "Signal Path Through The Underground Network",
-		"description": "Deep beneath the ancient ruins lies a network of underground tunnels. Each chamber is labeled with a unique name, and tunnels connect some of them directly. You’ve intercepted a distress signal that was sent from one chamber, and your job is to trace the shortest path it could have taken to reach another chamber.\n\nThe map of the tunnel system is encoded as an adjacency list. Your goal is to find the shortest path from the signal’s origin to its last known destination.\n\nReturn the path as a space-separated list of chamber labels. If no path exists, return 'NO PATH'.",
-		"exampleTestCases": [
-			{
-				"input": "[\"Start: A End: D\\nA: B, C\\nB: A, D\\nC: A, D\\nD: B, C\\n\"]",
-				"expectedOutput": "\"A B D\""
-			},
-			{
-				"input": "[\"Start: X End: Z\\nX: Y\\nY: X, Z\\nZ: Y\\n\"]",
-				"expectedOutput": "\"X Y Z\""
-			},
-			{
-				"input": "[\"Start: Hallway End: Control\\nHallway: Engine\\nEngine: Hallway\\nControl:\\n\"]",
-				"expectedOutput": "\"NO PATH\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[\"Start: E10 End: E40\\nE1: E2\\nE2: E1, E3\\nE3: E2, E4\\nE4: E3, E5\\nE5: E4, E6\\nE6: E5, E7\\nE7: E6, E8\\nE8: E7, E9\\nE9: E8, E10\\nE10: E9, E11\\nE11: E10, E12\\nE12: E11, E13\\nE13: E12, E14\\nE14: E13, E15\\nE15: E14, E16\\nE16: E15, E17\\nE17: E16, E18\\nE18: E17, E19\\nE19: E18, E20\\nE20: E19, E21\\nE21: E20, E22\\nE22: E21, E23\\nE23: E22, E24\\nE24: E23, E25\\nE25: E24, E26\\nE26: E25, E27\\nE27: E26, E28\\nE28: E27, E29\\nE29: E28, E30\\nE30: E29, E31\\nE31: E30, E32\\nE32: E31, E33\\nE33: E32, E34\\nE34: E33, E35\\nE35: E34, E36\\nE36: E35, E37\\nE37: E36, E38\\nE38: E37, E39\\nE39: E38, E40\\nE40: E39, E41\\nE41: E40, E42\\nE42: E41, E43\\nE43: E42, E44\\nE44: E43, E45\\nE45: E44, E46\\nE46: E45, E47\\nE47: E46, E48\\nE48: E47, E49\\nE49: E48, E50\\nE50: E49\\n\"]",
-				"expectedOutput": "\"E10 E11 E12 E13 E14 E15 E16 E17 E18 E19 E20 E21 E22 E23 E24 E25 E26 E27 E28 E29 E30 E31 E32 E33 E34 E35 E36 E37 E38 E39 E40\""
-			},
-			{
-				"input": "[\"Start: A5 End: A45\\nA1: A2\\nA2: A1, A3\\nA3: A2, A4\\nA4: A3, A5\\nA5: A4, A6\\nA6: A5, A7\\nA7: A6, A8\\nA8: A7, A9\\nA9: A8, A10\\nA10: A9, A11\\nA11: A10, A12\\nA12: A11, A13\\nA13: A12, A14\\nA14: A13, A15\\nA15: A14, A16\\nA16: A15, A17\\nA17: A16, A18\\nA18: A17, A19\\nA19: A18, A20\\nA20: A19, A21\\nA21: A20, A22\\nA22: A21, A23\\nA23: A22, A24\\nA24: A23, A25\\nA25: A24, A26\\nA26: A25, A27\\nA27: A26, A28\\nA28: A27, A29\\nA29: A28, A30\\nA30: A29, A31\\nA31: A30, A32\\nA32: A31, A33\\nA33: A32, A34\\nA34: A33, A35\\nA35: A34, A36\\nA36: A35, A37\\nA37: A36, A38\\nA38: A37, A39\\nA39: A38, A40\\nA40: A39, A41\\nA41: A40, A42\\nA42: A41, A43\\nA43: A42, A44\\nA44: A43, A45\\nA45: A44, A46\\nA46: A45, A47\\nA47: A46, A48\\nA48: A47, A49\\nA49: A48, A50\\nA50: A49\\n\"]",
-				"expectedOutput": "\"A5 A6 A7 A8 A9 A10 A11 A12 A13 A14 A15 A16 A17 A18 A19 A20 A21 A22 A23 A24 A25 A26 A27 A28 A29 A30 A31 A32 A33 A34 A35 A36 A37 A38 A39 A40 A41 A42 A43 A44 A45\""
-			},
-			{
-				"input": "[\"Start: N15 End: N35\\nN1: N2\\nN2: N1, N3\\nN3: N2, N4\\nN4: N3, N5\\nN5: N4, N6\\nN6: N5, N7\\nN7: N6, N8\\nN8: N7, N9\\nN9: N8, N10\\nN10: N9, N11\\nN11: N10, N12\\nN12: N11, N13\\nN13: N12, N14\\nN14: N13, N15\\nN15: N14, N16\\nN16: N15, N17\\nN17: N16, N18\\nN18: N17, N19\\nN19: N18, N20\\nN20: N19, N21\\nN21: N20, N22\\nN22: N21, N23\\nN23: N22, N24\\nN24: N23, N25\\nN25: N24, N26\\nN26: N25, N27\\nN27: N26, N28\\nN28: N27, N29\\nN29: N28, N30\\nN30: N29, N31\\nN31: N30, N32\\nN32: N31, N33\\nN33: N32, N34\\nN34: N33, N35\\nN35: N34, N36\\nN36: N35, N37\\nN37: N36, N38\\nN38: N37, N39\\nN39: N38, N40\\nN40: N39, N41\\nN41: N40, N42\\nN42: N41, N43\\nN43: N42, N44\\nN44: N43, N45\\nN45: N44, N46\\nN46: N45, N47\\nN47: N46, N48\\nN48: N47, N49\\nN49: N48, N50\\nN50: N49\\n\"]",
-				"expectedOutput": "\"N15 N16 N17 N18 N19 N20 N21 N22 N23 N24 N25 N26 N27 N28 N29 N30 N31 N32 N33 N34 N35\""
-			},
-			{
-				"input": "[\"Start: X10 End: X30\\nX1: X2\\nX2: X1, X3, X4\\nX3: X2\\nX4: X2, X5\\nX5: X4, X6\\nX6: X5, X7\\nX7: X6, X8\\nX8: X7, X9\\nX9: X8, X10\\nX10: X9, X11\\nX11: X10, X12\\nX12: X11, X13\\nX13: X12, X14\\nX14: X13, X15\\nX15: X14, X16\\nX16: X15, X17\\nX17: X16, X18\\nX18: X17, X19\\nX19: X18, X20\\nX20: X19, X21\\nX21: X20, X22\\nX22: X21, X23\\nX23: X22, X24\\nX24: X23, X25\\nX25: X24, X26\\nX26: X25, X27\\nX27: X26, X28\\nX28: X27, X29\\nX29: X28, X30\\nX30: X29, X31\\nX31: X30, X32\\nX32: X31, X33\\nX33: X32, X34\\nX34: X33, X35\\nX35: X34, X36\\nX36: X35, X37\\nX37: X36, X38\\nX38: X37, X39\\nX39: X38, X40\\nX40: X39, X41\\nX41: X40, X42\\nX42: X41, X43\\nX43: X42, X44\\nX44: X43, X45\\nX45: X44, X46\\nX46: X45, X47\\nX47: X46, X48\\nX48: X47, X49\\nX49: X48, X50\\nX50: X49\\n\"]",
-				"expectedOutput": "\"X10 X11 X12 X13 X14 X15 X16 X17 X18 X19 X20 X21 X22 X23 X24 X25 X26 X27 X28 X29 X30\""
-			},
-			{
-				"input": "[\"Start: R20 End: R40\\nR1: R2\\nR2: R1, R3\\nR3: R2, R4\\nR4: R3, R5\\nR5: R4, R6\\nR6: R5, R7\\nR7: R6, R8\\nR8: R7, R9\\nR9: R8, R10\\nR10: R9, R11\\nR11: R10, R12\\nR12: R11, R13\\nR13: R12, R14\\nR14: R13, R15\\nR15: R14, R16\\nR16: R15, R17\\nR17: R16, R18\\nR18: R17, R19\\nR19: R18, R20\\nR20: R19, R21\\nR21: R20, R22\\nR22: R21, R23\\nR23: R22, R24\\nR24: R23, R25\\nR25: R24, R26\\nR26: R25, R27\\nR27: R26, R28\\nR28: R27, R29\\nR29: R28, R30\\nR30: R29, R31\\nR31: R30, R32\\nR32: R31, R33\\nR33: R32, R34\\nR34: R33, R35\\nR35: R34, R36\\nR36: R35, R37\\nR37: R36, R38\\nR38: R37, R39\\nR39: R38, R40\\nR40: R39, R41\\nR41: R40, R42\\nR42: R41, R43\\nR43: R42, R44\\nR44: R43, R45\\nR45: R44, R46\\nR46: R45, R47\\nR47: R46, R48\\nR48: R47, R49\\nR49: R48, R50\\nR50: R49\\n\"]",
-				"expectedOutput": "\"R20 R21 R22 R23 R24 R25 R26 R27 R28 R29 R30 R31 R32 R33 R34 R35 R36 R37 R38 R39 R40\""
-			},
-			{
-				"input": "[\"Start: C5 End: C45\\nC1: C2\\nC2: C1, C3\\nC3: C2, C4\\nC4: C3, C5\\nC5: C4, C6\\nC6: C5, C7\\nC7: C6, C8\\nC8: C7, C9\\nC9: C8, C10\\nC10: C9, C11\\nC11: C10, C12\\nC12: C11, C13\\nC13: C12, C14\\nC14: C13, C15\\nC15: C14, C16\\nC16: C15, C17\\nC17: C16, C18\\nC18: C17, C19\\nC19: C18, C20\\nC20: C19, C21\\nC21: C20, C22\\nC22: C21, C23\\nC23: C22, C24\\nC24: C23, C25\\nC25: C24, C26\\nC26: C25, C27\\nC27: C26, C28\\nC28: C27, C29\\nC29: C28, C30\\nC30: C29, C31\\nC31: C30, C32\\nC32: C31, C33\\nC33: C32, C34\\nC34: C33, C35\\nC35: C34, C36\\nC36: C35, C37\\nC37: C36, C38\\nC38: C37, C39\\nC39: C38, C40\\nC40: C39, C41\\nC41: C40, C42\\nC42: C41, C43\\nC43: C42, C44\\nC44: C43, C45\\nC45: C44, C46\\nC46: C45, C47\\nC47: C46, C48\\nC48: C47, C49\\nC49: C48, C50\\nC50: C49\\n\"]",
-				"expectedOutput": "\"C5 C6 C7 C8 C9 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 C24 C25 C26 C27 C28 C29 C30 C31 C32 C33 C34 C35 C36 C37 C38 C39 C40 C41 C42 C43 C44 C45\""
-			},
-			{
-				"input": "[\"Start: N10 End: N30\\nN1: N2, N3, N4\\nN2: N1, N5\\nN3: N1, N6\\nN4: N1, N7\\nN5: N2, N8\\nN6: N3, N9\\nN7: N4, N10\\nN8: N5, N11\\nN9: N6, N12\\nN10: N7, N13\\nN11: N8, N14\\nN12: N9, N15\\nN13: N10, N16\\nN14: N11, N17\\nN15: N12, N18\\nN16: N13, N19\\nN17: N14, N20\\nN18: N15, N21\\nN19: N16, N22\\nN20: N17, N23\\nN21: N18, N24\\nN22: N19, N25\\nN23: N20, N26\\nN24: N21, N27\\nN25: N22, N28\\nN26: N23, N29\\nN27: N24, N30\\nN28: N25, N31\\nN29: N26, N32\\nN30: N27, N33\\nN31: N28, N34\\nN32: N29, N35\\nN33: N30, N36\\nN34: N31, N37\\nN35: N32, N38\\nN36: N33, N39\\nN37: N34, N40\\nN38: N35, N41\\nN39: N36, N42\\nN40: N37, N43\\nN41: N38, N44\\nN42: N39, N45\\nN43: N40, N46\\nN44: N41, N47\\nN45: N42, N48\\nN46: N43, N49\\nN47: N44, N50\\nN48: N45\\nN49: N46\\nN50: N47\\n\"]",
-				"expectedOutput": "\"N10 N13 N16 N19 N22 N25 N28 N30\""
-			},
-			{
-				"input": "[\"Start: P5 End: P25\\nP1: P2, P3\\nP2: P1, P4\\nP3: P1, P5\\nP4: P2, P6\\nP5: P3, P7\\nP6: P4, P8\\nP7: P5, P9\\nP8: P6, P10\\nP9: P7, P11\\nP10: P8, P12\\nP11: P9, P13\\nP12: P10, P14\\nP13: P11, P15\\nP14: P12, P16\\nP15: P13, P17\\nP16: P14, P18\\nP17: P15, P19\\nP18: P16, P20\\nP19: P17, P21\\nP20: P18, P22\\nP21: P19, P23\\nP22: P20, P24\\nP23: P21, P25\\nP24: P22, P26\\nP25: P23, P27\\nP26: P24, P28\\nP27: P25, P29\\nP28: P26, P30\\nP29: P27, P31\\nP30: P28, P32\\nP31: P29, P33\\nP32: P30, P34\\nP33: P31, P35\\nP34: P32, P36\\nP35: P33, P37\\nP36: P34, P38\\nP37: P35, P39\\nP38: P36, P40\\nP39: P37, P41\\nP40: P38, P42\\nP41: P39, P43\\nP42: P40, P44\\nP43: P41, P45\\nP44: P42, P46\\nP45: P43, P47\\nP46: P44, P48\\nP47: P45, P49\\nP48: P46, P50\\nP49: P47\\nP50: P48\\n\"]",
-				"expectedOutput": "\"P5 P7 P9 P11 P13 P15 P17 P19 P21 P23 P25\""
-			},
-			{
-				"input": "[\"Start: Z15 End: Z35\\nZ1: Z2, Z3\\nZ2: Z1, Z4, Z5\\nZ3: Z1, Z6\\nZ4: Z2, Z7\\nZ5: Z2, Z8\\nZ6: Z3, Z9\\nZ7: Z4, Z10\\nZ8: Z5, Z11\\nZ9: Z6, Z12\\nZ10: Z7, Z13\\nZ11: Z8, Z14\\nZ12: Z9, Z15\\nZ13: Z10, Z16\\nZ14: Z11, Z17\\nZ15: Z12, Z18\\nZ16: Z13, Z19\\nZ17: Z14, Z20\\nZ18: Z15, Z21\\nZ19: Z16, Z22\\nZ20: Z17, Z23\\nZ21: Z18, Z24\\nZ22: Z19, Z25\\nZ23: Z20, Z26\\nZ24: Z21, Z27\\nZ25: Z22, Z28\\nZ26: Z23, Z29\\nZ27: Z24, Z30\\nZ28: Z25, Z31\\nZ29: Z26, Z32\\nZ30: Z27, Z33\\nZ31: Z28, Z34\\nZ32: Z29, Z35\\nZ33: Z30, Z36\\nZ34: Z31, Z37\\nZ35: Z32, Z38\\nZ36: Z33, Z39\\nZ37: Z34, Z40\\nZ38: Z35, Z41\\nZ39: Z36, Z42\\nZ40: Z37, Z43\\nZ41: Z38, Z44\\nZ42: Z39, Z45\\nZ43: Z40, Z46\\nZ44: Z41, Z47\\nZ45: Z42, Z48\\nZ46: Z43, Z49\\nZ47: Z44, Z50\\nZ48: Z45\\nZ49: Z46\\nZ50: Z47\\n\"]",
-				"expectedOutput": "\"Z15 Z18 Z21 Z24 Z27 Z30 Z33 Z35\""
-			},
-			{
-				"input": "[\"Start: M10 End: M40\\nM1: M2, M3, M4, M5\\nM2: M1, M6\\nM3: M1, M7\\nM4: M1, M8\\nM5: M1, M9\\nM6: M2, M10\\nM7: M3, M11\\nM8: M4, M12\\nM9: M5, M13\\nM10: M6, M14\\nM11: M7, M15\\nM12: M8, M16\\nM13: M9, M17\\nM14: M10, M18\\nM15: M11, M19\\nM16: M12, M20\\nM17: M13, M21\\nM18: M14, M22\\nM19: M15, M23\\nM20: M16, M24\\nM21: M17, M25\\nM22: M18, M26\\nM23: M19, M27\\nM24: M20, M28\\nM25: M21, M29\\nM26: M22, M30\\nM27: M23, M31\\nM28: M24, M32\\nM29: M25, M33\\nM30: M26, M34\\nM31: M27, M35\\nM32: M28, M36\\nM33: M29, M37\\nM34: M30, M38\\nM35: M31, M39\\nM36: M32, M40\\nM37: M33, M41\\nM38: M34, M42\\nM39: M35, M43\\nM40: M36, M44\\nM41: M37, M45\\nM42: M38, M46\\nM43: M39, M47\\nM44: M40, M48\\nM45: M41, M49\\nM46: M42, M50\\nM47: M43\\nM48: M44\\nM49: M45\\nM50: M46\\n\"]",
-				"expectedOutput": "\"M10 M14 M18 M22 M26 M30 M34 M38 M40\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "signalPath",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def signalPath(self, graph_data: str) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {string} graph_data\n * @return {string}\n */\nvar signalPath = function(graph_data) {\n\n};"
-		}
-	},
-	{
-		"_id": "sudoku",
-		"difficulty": "HARD",
-		"title": "Sudoku",
-		"description": "Write a program that solves the Sudoku given in input. The empty cells are represented by 0.",
-		"exampleTestCases": [
-			{
-				"input": "[\"5 3 0 0 7 0 0 0 0\\n6 0 0 1 9 5 0 0 0\\n0 9 8 0 0 0 0 6 0\\n\\n8 0 0 0 6 0 0 0 3\\n4 0 0 8 0 3 0 0 1\\n7 0 0 0 2 0 0 0 6\\n\\n0 6 0 0 0 0 2 8 0\\n0 0 0 4 1 9 0 0 5\\n0 0 0 0 8 0 0 7 9\"]",
-				"expectedOutput": "\"5 3 4 6 7 8 9 1 2\\n6 7 2 1 9 5 3 4 8\\n1 9 8 3 4 2 5 6 7\\n\\n8 5 9 7 6 1 4 2 3\\n4 2 6 8 5 3 7 9 1\\n7 1 3 9 2 4 8 5 6\\n\\n9 6 1 5 3 7 2 8 4\\n2 8 7 4 1 9 6 3 5\\n3 4 5 2 8 6 1 7 9\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[\"0 0 3 0 2 0 6 0 0\\n9 0 0 3 0 5 0 0 1\\n0 0 1 8 0 6 4 0 0\\n\\n0 0 8 1 0 2 9 0 0\\n7 0 0 0 0 0 0 0 8\\n0 0 6 7 0 8 2 0 0\\n\\n0 0 2 6 0 9 5 0 0\\n8 0 0 2 0 3 0 0 9\\n0 0 5 0 1 0 3 0 0\"]",
-				"expectedOutput": "\"4 8 3 9 2 1 6 5 7\\n9 6 7 3 4 5 8 2 1\\n2 5 1 8 7 6 4 9 3\\n\\n5 4 8 1 3 2 9 7 6\\n7 2 9 5 6 4 1 3 8\\n1 3 6 7 9 8 2 4 5\\n\\n3 7 2 6 8 9 5 1 4\\n8 1 4 2 5 3 7 6 9\\n6 9 5 4 1 7 3 8 2\""
-			},
-			{
-				"input": "[\"0 2 0 0 0 0 0 0 0\\n0 0 0 6 0 0 0 0 3\\n0 0 0 0 7 0 0 9 0\\n\\n1 0 0 0 0 4 5 0 0\\n0 0 0 0 0 0 0 0 0\\n0 0 0 9 0 0 0 0 1\\n\\n0 6 0 0 3 0 0 8 0\\n5 0 0 0 0 2 0 0 0\\n0 0 0 0 0 0 0 4 0\"]",
-				"expectedOutput": "\"6 2 1 5 9 8 4 3 7\\n9 5 7 6 2 1 8 4 3\\n8 4 3 4 7 3 2 9 5\\n\\n1 9 6 8 4 5 3 7 2\\n7 3 8 2 1 9 5 6 4\\n4 8 5 9 6 7 2 5 1\\n\\n2 6 9 1 3 4 7 8 5\\n5 1 4 7 8 2 6 9 3\\n3 7 2 5 6 9 1 4 8\""
-			},
-			{
-				"input": "[\"0 0 0 6 0 0 0 0 0\\n0 5 9 0 0 0 0 0 0\\n3 0 0 0 0 8 0 0 0\\n\\n0 0 0 0 0 0 7 0 9\\n0 0 0 0 5 0 0 0 0\\n2 0 6 0 0 0 0 0 0\\n\\n0 0 0 8 0 0 0 0 4\\n0 0 0 0 0 0 2 7 0\\n0 0 0 0 0 1 0 0 0\"]",
-				"expectedOutput": "\"8 1 2 6 4 7 9 5 3\\n7 5 9 2 1 3 4 8 6\\n3 6 4 5 9 8 7 2 1\\n\\n4 8 5 1 2 6 7 3 9\\n9 3 7 4 5 9 8 1 2\\n2 9 6 3 8 7 5 4 1\\n\\n5 2 3 8 7 9 1 6 4\\n6 4 1 9 3 5 2 7 8\\n1 7 8 5 6 1 3 9 5\""
-			},
-			{
-				"input": "[\"4 0 0 0 0 5 0 0 0\\n0 0 2 0 0 0 0 0 0\\n0 0 0 0 0 0 1 0 0\\n\\n0 1 0 2 0 0 0 0 0\\n0 0 0 0 3 0 0 0 0\\n0 0 0 0 0 9 0 4 0\\n\\n0 0 8 0 0 0 0 0 0\\n0 0 0 0 0 0 6 0 0\\n0 0 0 7 0 0 0 0 2\"]",
-				"expectedOutput": "\"4 6 9 8 7 5 2 1 3\\n5 8 2 4 1 3 7 9 6\\n7 3 1 9 6 2 1 5 8\\n\\n9 1 4 2 5 7 8 3 6\\n6 5 7 1 3 8 9 2 4\\n8 2 3 6 9 5 1 4 7\\n\\n3 7 8 5 2 1 6 9 4\\n2 9 5 3 4 6 8 7 1\\n1 4 6 7 8 9 5 3 2\""
-			},
-			{
-				"input": "[\"0 0 0 0 0 0 0 0 6\\n0 4 0 0 0 0 0 0 0\\n0 0 0 3 0 0 0 8 0\\n\\n0 0 9 0 0 0 2 0 0\\n0 0 0 0 1 0 0 0 0\\n0 0 2 0 0 0 9 0 0\\n\\n0 5 0 0 0 4 0 0 0\\n0 0 0 0 0 0 0 1 0\\n7 0 0 0 0 0 0 0 0\"]",
-				"expectedOutput": "\"2 1 3 9 5 8 7 4 6\\n8 4 7 6 2 1 5 9 3\\n9 6 5 3 4 7 1 8 2\\n\\n5 8 9 4 6 3 2 7 1\\n6 7 4 8 1 2 9 3 5\\n3 2 1 7 9 5 6 8 4\\n\\n1 5 8 2 3 4 9 6 7\\n4 9 2 5 7 6 8 1 3\\n7 3 6 1 8 9 4 5 2\""
-			},
-			{
-				"input": "[\"0 0 0 0 1 0 0 0 0\\n0 0 6 0 0 0 0 0 0\\n0 0 0 0 0 9 0 0 0\\n\\n0 2 0 0 0 0 0 0 5\\n7 0 0 0 0 0 0 0 0\\n0 0 0 0 0 0 4 0 0\\n\\n0 0 0 6 0 0 0 0 0\\n0 0 0 0 0 0 2 0 0\\n0 0 0 0 8 0 0 0 0\"]",
-				"expectedOutput": "\"9 8 4 3 1 5 6 2 7\\n2 3 6 8 4 7 9 5 1\\n5 7 1 2 6 9 8 3 4\\n\\n6 2 9 4 3 8 7 1 5\\n7 4 5 9 2 1 3 8 6\\n8 1 3 7 5 6 4 9 2\\n\\n4 9 8 6 7 2 5 1 3\\n3 5 7 1 9 4 2 6 8\\n1 6 2 5 8 3 9 4 7\""
-			},
-			{
-				"input": "[\"0 0 0 0 0 0 0 3 0\\n0 0 0 0 2 0 0 0 0\\n0 0 8 0 0 0 0 0 0\\n\\n0 9 0 0 0 0 0 0 0\\n0 0 0 5 0 0 0 0 0\\n0 0 0 0 0 0 6 0 0\\n\\n0 0 0 0 0 4 0 0 0\\n0 0 0 0 7 0 0 0 0\\n0 6 0 0 0 0 0 0 0\"]",
-				"expectedOutput": "\"6 4 7 9 5 8 1 3 2\\n9 5 3 4 2 1 7 8 6\\n1 2 8 6 3 7 4 5 9\\n\\n8 9 2 7 1 6 5 4 3\\n7 3 6 5 4 9 8 1 2\\n5 1 4 8 9 3 6 2 7\\n\\n3 8 9 2 6 4 7 5 1\\n2 7 5 1 8 9 3 6 4\\n4 6 1 3 7 5 2 9 8\""
-			},
-			{
-				"input": "[\"0 0 0 0 0 6 0 0 0\\n0 0 0 0 0 0 0 0 9\\n0 0 0 7 0 0 0 0 0\\n\\n0 0 4 0 0 0 0 0 0\\n0 8 0 0 0 0 0 0 0\\n0 0 0 0 0 0 5 0 0\\n\\n0 0 0 0 0 2 0 0 0\\n2 0 0 0 0 0 0 0 0\\n0 0 0 4 0 0 0 0 0\"]",
-				"expectedOutput": "\"8 9 2 3 5 6 4 7 1\\n7 4 3 2 1 8 6 5 9\\n5 1 6 7 9 4 3 2 8\\n\\n9 6 4 8 2 5 7 1 3\\n3 8 5 1 4 7 9 6 2\\n2 7 1 9 6 3 5 8 4\\n\\n4 5 9 6 3 2 8 1 7\\n2 3 8 5 7 1 9 4 6\\n6 2 7 4 8 9 1 3 5\""
-			},
-			{
-				"input": "[\"0 0 0 0 0 0 0 0 8\\n0 0 0 0 0 9 0 0 0\\n0 0 0 0 6 0 0 0 0\\n\\n0 0 0 0 0 0 2 0 0\\n0 0 7 0 0 0 0 0 0\\n0 0 0 0 0 0 0 0 0\\n\\n0 0 0 0 1 0 0 0 0\\n0 0 0 8 0 0 0 0 0\\n5 0 0 0 0 0 0 0 0\"]",
-				"expectedOutput": "\"9 6 4 2 3 5 1 7 8\\n7 1 8 4 5 9 3 2 6\\n2 5 3 7 6 8 4 9 1\\n\\n4 8 5 9 7 1 2 6 3\\n6 9 7 5 2 3 8 1 4\\n3 2 1 6 8 4 5 9 7\\n\\n8 4 6 1 9 2 7 3 5\\n1 3 9 8 4 7 6 5 2\\n5 7 2 3 1 6 9 4 8\""
-			},
-			{
-				"input": "[\"0 0 0 0 0 0 0 0 0\\n0 0 0 0 0 3 0 0 0\\n0 0 0 0 0 0 0 0 0\\n\\n0 0 0 0 0 0 0 0 0\\n0 0 0 0 0 0 0 0 0\\n0 0 0 0 0 0 0 0 0\\n\\n0 0 0 0 0 0 0 0 0\\n0 0 0 0 0 0 0 0 0\\n0 0 0 0 0 0 0 0 7\"]",
-				"expectedOutput": "\"1 2 3 4 5 6 7 8 9\\n4 5 6 7 8 3 1 2 9\\n7 8 9 1 2 9 4 5 6\\n\\n2 3 4 5 6 7 8 9 1\\n5 6 7 8 9 1 2 3 4\\n8 9 1 2 3 4 5 6 7\\n\\n3 4 5 6 7 8 9 1 2\\n6 7 8 9 1 2 3 4 5\\n9 1 2 3 4 5 6 7 8\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "solveSudoku",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def solveSudoku(self, board: str) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {string} board\n * @return {string}\n */\nvar solveSudoku = function(board) {\n\n};"
-		}
-	},
-	{
-		"_id": "print-pyramid",
-		"difficulty": "EASY",
-		"title": "Print Pyramid",
-		"description": "Write a program that prints a pyramid of stars (`*`) with a given height and orientation (`normal` or `reverse`). The pyramid should be centered, with each row having an odd number of stars, increasing by 2 for each subsequent row in a normal pyramid, or decreasing by 2 in a reverse pyramid. The input consists of two parameters: `height` (an integer) and `order` (a string, either 'normal' or 'reverse'). Each row should be separated by a newline (`\n`).",
-		"exampleTestCases": [
-			{
-				"input": "[3, \"normal\"]",
-				"expectedOutput": "\"  *\\n ***\\n*****\""
-			},
-			{
-				"input": "[3, \"reverse\"]",
-				"expectedOutput": "\"*****\\n ***\\n  *\""
-			},
-			{
-				"input": "[5, \"normal\"]",
-				"expectedOutput": "\"    *\\n   ***\\n  *****\\n *******\\n*********\""
-			},
-			{
-				"input": "[5, \"reverse\"]",
-				"expectedOutput": "\"*********\\n *******\\n  *****\\n   ***\\n    *\""
-			}
-		],
-		"testCases": [
-			{
-				"input": "[7, \"normal\"]",
-				"expectedOutput": "\"      *\\n     ***\\n    *****\\n   *******\\n  *********\\n ***********\\n*************\""
-			},
-			{
-				"input": "[7, \"reverse\"]",
-				"expectedOutput": "\"*************\\n ***********\\n  *********\\n   *******\\n    *****\\n     ***\\n      *\""
-			},
-			{
-				"input": "[10, \"normal\"]",
-				"expectedOutput": "\"         *\\n        ***\\n       *****\\n      *******\\n     *********\\n    ***********\\n   *************\\n  ***************\\n *****************\\n*******************\""
-			},
-			{
-				"input": "[10, \"reverse\"]",
-				"expectedOutput": "\"*******************\\n *****************\\n  ***************\\n   *************\\n    ***********\\n     *********\\n      *******\\n       *****\\n        ***\\n         *\""
-			},
-			{
-				"input": "[8, \"normal\"]",
-				"expectedOutput": "\"       *\\n      ***\\n     *****\\n    *******\\n   *********\\n  ***********\\n *************\\n***************\""
-			},
-			{
-				"input": "[8, \"reverse\"]",
-				"expectedOutput": "\"***************\\n *************\\n  ***********\\n   *********\\n    *******\\n     *****\\n      ***\\n       *\""
-			},
-			{
-				"input": "[12, \"normal\"]",
-				"expectedOutput": "\"           *\\n          ***\\n         *****\\n        *******\\n       *********\\n      ***********\\n     *************\\n    ***************\\n   *****************\\n  *******************\\n *********************\\n***********************\""
-			},
-			{
-				"input": "[12, \"reverse\"]",
-				"expectedOutput": "\"***********************\\n *********************\\n  *******************\\n   *****************\\n    ***************\\n     *************\\n      ***********\\n       *********\\n        *******\\n         *****\\n          ***\\n           *\""
-			},
-			{
-				"input": "[15, \"normal\"]",
-				"expectedOutput": "\"              *\\n             ***\\n            *****\\n           *******\\n          *********\\n         ***********\\n        *************\\n       ***************\\n      *****************\\n     *******************\\n    *********************\\n   ***********************\\n  *************************\\n ***************************\\n*****************************\""
-			},
-			{
-				"input": "[15, \"reverse\"]",
-				"expectedOutput": "\"*****************************\\n ***************************\\n  *************************\\n   ***********************\\n    *********************\\n     *******************\\n      *****************\\n       ***************\\n        *************\\n         ***********\\n          *********\\n           *******\\n            *****\\n             ***\\n              *\""
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "printPyramid",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def printPyramid(self, height: int, direction: str) -> str:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {number} height\n * @param {string} direction\n * @return {string}\n */\nvar printPyramid = function(height, direction) {\n\n};"
-		}
-	},
-	{
-		"_id": "maximum-subarray-sum",
-		"difficulty": "MEDIUM",
-		"title": "Maximum Subarray Sum",
-		"description": "Given an array of `n` integers, find the contiguous subarray with the largest sum. The input consists of the number of integers `n` on the first line, followed by `n` integers separated by spaces on the next line. Return the maximum sum of any contiguous subarray. If all sums are negative, return the least negative sum.",
-		"exampleTestCases": [
-			{
-				"input": "[8, \"-1 2 4 -3 5 2 -5 2\"]",
-				"expectedOutput": "10"
-			},
-			{
-				"input": "[6, \"-2 1 -3 4 -1 2\"]",
-				"expectedOutput": "6"
-			},
-			{
-				"input": "[5, \"-1 -2 -3 -4 -5\"]",
-				"expectedOutput": "-1"
-			}
-		],
-		"testCases": [
-			{
-				"input": "[10, \"-2 3 -1 5 -3 2 -4 6 -2 1\"]",
-				"expectedOutput": "12"
-			},
-			{
-				"input": "[15, \"-1 2 -3 4 -5 6 -7 8 -9 10 -11 12 -13 14 -15\"]",
-				"expectedOutput": "25"
-			},
-			{
-				"input": "[20, \"1 -2 3 -4 5 -6 7 -8 9 -10 11 -12 13 -14 15 -16 17 -18 19 -20\"]",
-				"expectedOutput": "34"
-			},
-			{
-				"input": "[12, \"-5 -4 -3 -2 -1 0 1 2 3 4 5 6\"]",
-				"expectedOutput": "21"
-			},
-			{
-				"input": "[18, \"-10 -9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7\"]",
-				"expectedOutput": "28"
-			},
-			{
-				"input": "[25, \"-3 2 -4 5 -6 7 -8 9 -10 11 -12 13 -14 15 -16 17 -18 19 -20 21 -22 23 -24 25 -26\"]",
-				"expectedOutput": "49"
-			},
-			{
-				"input": "[30, \"1 -2 3 -4 5 -6 7 -8 9 -10 11 -12 13 -14 15 -16 17 -18 19 -20 21 -22 23 -24 25 -26 27 -28 29 -30\"]",
-				"expectedOutput": "64"
-			},
-			{
-				"input": "[22, \"-5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16\"]",
-				"expectedOutput": "120"
-			},
-			{
-				"input": "[28, \"-10 -9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17\"]",
-				"expectedOutput": "147"
-			},
-			{
-				"input": "[35, \"-5 4 -3 2 -1 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29\"]",
-				"expectedOutput": "385"
-			}
-		],
-		"assumptions": [],
-		"constraints": [],
-		"methodName": "maxSubArray",
-		"starterTemplates": {
-			"PYTHON": "class Solution:\n    def maxSubArray(self, n: int, nums: List[int]) -> int:\n        pass",
-			"JAVASCRIPT": "/**\n * @param {number} n\n * @param {number[]} nums\n * @return {number}\n */\nvar maxSubArray = function(n, nums) {\n\n};"
+			"PYTHON": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        pass",
+			"JAVASCRIPT": "/**\n * @param {number[]} prices\n * @return {number}\n */\nvar maxProfit = function(prices) {\n    \n};"
 		}
 	}
 ]

@@ -68,11 +68,11 @@ def run_tests():
                     pass # sort failed, rely on previous check
 
             if not match:
-                print(f"FAILED: Test Case {i+1}")
+                print(f"{'FAILED:':<10} Test Case {i+1}")
                 # print the raw args to help the user debug
-                print(f"Input:    {json.dumps(args)}")
-                print(f"Expected: {json.dumps(expected)}")
-                print(f"Got:      {json.dumps(result)}")
+                print(f"{'Input:':<10} {json.dumps(args)}")
+                print(f"{'Expected:':<10} {json.dumps(expected)}")
+                print(f"{'Got:':<10} {json.dumps(result)}")
                 return
 
         except Exception as e:
