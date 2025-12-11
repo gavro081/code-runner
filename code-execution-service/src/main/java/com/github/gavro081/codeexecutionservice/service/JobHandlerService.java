@@ -9,10 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-
 import static com.github.gavro081.common.config.RabbitMQConstants.EXCHANGE_NAME;
-import static com.github.gavro081.common.config.RabbitMQConstants.JOB_FINISHED_ROUTING_KEY;
 
 
 @Service
@@ -59,6 +56,6 @@ public class JobHandlerService {
                 .stdout(stdout)
                 .build();
 
-        rabbitTemplate.convertAndSend(EXCHANGE_NAME, JOB_FINISHED_ROUTING_KEY, event);
+        rabbitTemplate.convertAndSend(EXCHANGE_NAME, job.serverId(), event);
     }
 }

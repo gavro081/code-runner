@@ -26,11 +26,13 @@ public class JobService {
     private final JobStatusEventStore jobStatusEventStore;
     private final JobRepository jobRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final String instanceId;
 
-    public JobService(JobStatusEventStore jobStatusEventStore, JobRepository jobRepository, RabbitTemplate rabbitTemplate) {
+    public JobService(JobStatusEventStore jobStatusEventStore, JobRepository jobRepository, RabbitTemplate rabbitTemplate, String instanceId) {
         this.jobStatusEventStore = jobStatusEventStore;
         this.jobRepository = jobRepository;
         this.rabbitTemplate = rabbitTemplate;
+        this.instanceId = instanceId;
     }
 
     public UUID createJob(CodeSubmissionDto codeSubmissionDto){
@@ -59,6 +61,7 @@ public class JobService {
                 .timestamp(Instant.now())
                 .code(code)
                 .language(language)
+                .serverId(instanceId)
                 .build();
 
         rabbitTemplate.convertAndSend(EXCHANGE_NAME, JOB_CREATED_ROUTING_KEY, event);
@@ -67,9 +70,9 @@ public class JobService {
 
     public JobStatusDto getJobStatus(@NotNull UUID jobId) throws JobNotFoundException{
         Optional<JobStatusEvent> jobStatusOptional = jobStatusEventStore.findById(jobId);
-        JobStatus jobStatus = null;
-        String stderr = null;
-        String stdout = null;
+        JobStatus jobStatus;
+        String stderr;
+        String stdout;
         if (jobStatusOptional.isPresent()){
             JobStatusEvent jobStatusEvent = jobStatusOptional.get();
             jobStatus = jobStatusEvent.status();

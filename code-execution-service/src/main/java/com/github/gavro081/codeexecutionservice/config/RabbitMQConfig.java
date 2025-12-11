@@ -64,8 +64,8 @@ public class RabbitMQConfig {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         configurer.configure(factory, connectionFactory);
 
-        factory.setConcurrentConsumers(10);
-        factory.setMaxConcurrentConsumers(30);
+        factory.setConcurrentConsumers(4);
+        factory.setMaxConcurrentConsumers(10);
         // wait 1s before starting a new consumer-worker
         factory.setStartConsumerMinInterval(1000L);
         // consumer should be idle for 10 s before stopping

@@ -14,7 +14,8 @@ public record JobCreatedEvent(
         String problemId,
         Instant timestamp,
         ProgrammingLanguage language,
-        String code
+        String code,
+        String serverId
 ) implements Serializable {
 
     @Override

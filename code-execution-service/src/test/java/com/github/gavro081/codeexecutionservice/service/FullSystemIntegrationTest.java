@@ -121,7 +121,8 @@ class FullSystemIntegrationTest {
                             problemId,
                             Instant.now(),
                             language,
-                            code
+                            code,
+                            UUID.randomUUID().toString()
                     );
 
                     ExecutionResult result = codeExecutionService.execute(job);

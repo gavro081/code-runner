@@ -2,13 +2,11 @@ package com.github.gavro081.apiserver.config;
 
 import com.github.gavro081.common.events.JobCreatedEvent;
 import com.github.gavro081.common.events.JobStatusEvent;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,16 +23,19 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    Queue serverQueue(){
-        return new Queue(SERVER_QUEUE, true);
+    Queue serverQueue(String instanceId) {
+        return QueueBuilder
+                .nonDurable("server_queue." + instanceId)
+                .autoDelete()
+                .build();
     }
 
     @Bean
-    Binding serverBinding(Queue serverQueue, TopicExchange exchange){
+    Binding serverBinding(Queue serverQueue, TopicExchange exchange, String instanceId){
         return BindingBuilder
                 .bind(serverQueue)
                 .to(exchange)
-                .with(JOB_FINISHED_ROUTING_KEY);
+                .with(instanceId);
     }
 
     @Bean
