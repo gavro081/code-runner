@@ -85,7 +85,7 @@ public class JobService {
             jobStatus = job.getStatus();
             stderr = job.getStderr();
             stdout = job.getStdout();
-            System.out.printf("Serving response for job %s from local state%n", jobId);
+            System.out.printf("Serving response for job %s from db%n", jobId);
         }
 
         return JobStatusDto.builder()

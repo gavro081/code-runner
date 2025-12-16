@@ -30,6 +30,10 @@ public class JobEventListener {
 
     @RabbitHandler
     public void handleJobCreatedEvent(JobCreatedEvent job) {
+        System.out.printf(
+                "%s running job: %s%n",
+                Thread.currentThread().getName(), job
+                );
         double load = cpuMonitor.getSystemCpuLoad();
         if (load >= CPU_LOAD_THRESHOLD){
             try {

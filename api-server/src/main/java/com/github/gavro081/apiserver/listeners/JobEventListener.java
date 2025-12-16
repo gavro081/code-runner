@@ -18,6 +18,7 @@ public class JobEventListener {
 
     @RabbitHandler
     public void handleJobStatusEvent(JobStatusEvent job){
+        System.out.printf("Received status for %s%n", job);
         jobService.updateJob(job);
     }
 }
