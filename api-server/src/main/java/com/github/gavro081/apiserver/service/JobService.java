@@ -23,13 +23,11 @@ import static com.github.gavro081.common.config.RabbitMQConstants.JOB_CREATED_RO
 
 @Service
 public class JobService {
-    private final JobStatusEventStore jobStatusEventStore;
     private final JobRepository jobRepository;
     private final RabbitTemplate rabbitTemplate;
     private final String instanceId;
 
-    public JobService(JobStatusEventStore jobStatusEventStore, JobRepository jobRepository, RabbitTemplate rabbitTemplate, String instanceId) {
-        this.jobStatusEventStore = jobStatusEventStore;
+    public JobService(JobRepository jobRepository, RabbitTemplate rabbitTemplate, String instanceId) {
         this.jobRepository = jobRepository;
         this.rabbitTemplate = rabbitTemplate;
         this.instanceId = instanceId;
@@ -38,26 +36,17 @@ public class JobService {
     public UUID createJob(CodeSubmissionDto codeSubmissionDto){
         ProgrammingLanguage language = codeSubmissionDto.language();
         String code = codeSubmissionDto.code();
-//        Job job = Job.builder()
-//                .language(language)
-//                .code(code)
-//                .status(JobStatus.PENDING)
-//                .build();
-//        Job savedJob = jobRepository.save(job);
-        UUID jobId = UUID.randomUUID();
-
-        JobStatusEvent job = JobStatusEvent.builder()
-                .jobId(jobId)
+        Job job = Job.builder()
+                .id(UUID.randomUUID())
+                .language(language)
+                .code(code)
                 .status(JobStatus.PENDING)
-                .stdout(null)
-                .stderr(null)
                 .build();
-
-        jobStatusEventStore.save(job);
+        jobRepository.save(job);
 
         JobCreatedEvent event = JobCreatedEvent.builder()
                 .problemId(codeSubmissionDto.problemId())
-                .jobId(jobId)
+                .jobId(job.getId())
                 .timestamp(Instant.now())
                 .code(code)
                 .language(language)
@@ -65,37 +54,24 @@ public class JobService {
                 .build();
 
         rabbitTemplate.convertAndSend(EXCHANGE_NAME, JOB_CREATED_ROUTING_KEY, event);
-        return jobId;
+        return job.getId();
     }
 
     public JobStatusDto getJobStatus(@NotNull UUID jobId) throws JobNotFoundException{
-        Optional<JobStatusEvent> jobStatusOptional = jobStatusEventStore.findById(jobId);
         JobStatus jobStatus;
         String stderr;
         String stdout;
-        if (jobStatusOptional.isPresent()){
-            JobStatusEvent jobStatusEvent = jobStatusOptional.get();
-            jobStatus = jobStatusEvent.status();
-            stderr = jobStatusEvent.stderr();
-            stdout = jobStatusEvent.stdout();
-            System.out.printf("Serving response for job %s from local state%n", jobId);
-        } else {
-            Job job = jobRepository.findById(jobId)
-                    .orElseThrow(() -> new JobNotFoundException(String.format("Job %s not found", jobId)));
-            jobStatus = job.getStatus();
-            stderr = job.getStderr();
-            stdout = job.getStdout();
-            System.out.printf("Serving response for job %s from db%n", jobId);
-        }
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new JobNotFoundException(String.format("Job %s not found", jobId)));
+        jobStatus = job.getStatus();
+        stderr = job.getStderr();
+        stdout = job.getStdout();
+        System.out.printf("Serving response for job %s from db%n", jobId);
 
         return JobStatusDto.builder()
                 .jobStatus(jobStatus)
                 .stderr(stderr)
                 .stdout(stdout)
                 .build();
-    }
-
-    public void updateJob(JobStatusEvent jobStatusEvent) {
-        jobStatusEventStore.save(jobStatusEvent); // replace previous UUID with new status
     }
 }

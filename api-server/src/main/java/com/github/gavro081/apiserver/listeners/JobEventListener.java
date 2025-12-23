@@ -10,15 +10,15 @@ import com.github.gavro081.common.events.JobStatusEvent;
 @Component
 @RabbitListener(queues = "#{serverQueue.name}")
 public class JobEventListener {
-    private final JobService jobService;
+//    private final JobService jobService;
 
-    public JobEventListener(JobService jobService) {
-        this.jobService = jobService;
-    }
+//    public JobEventListener(JobService jobService) {
+//        this.jobService = jobService;
+//    }
 
     @RabbitHandler
     public void handleJobStatusEvent(JobStatusEvent job){
         System.out.printf("Received status for %s%n", job);
-        jobService.updateJob(job);
+//        jobService.updateJob(job);
     }
 }
