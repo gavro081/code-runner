@@ -76,3 +76,9 @@ export const problemsIds = [
 	"palindrome-number",
 	"best-time-to-buy-and-sell-stock",
 ];
+
+export interface Problem {
+	id: string;
+	title: string;
+	difficulty: "EASY" | "MEDIUM" | "HARD";
+}

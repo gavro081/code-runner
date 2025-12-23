@@ -26,4 +26,8 @@ public class ProblemService {
     public List<Problem> getProblems(){
         return problemRepository.findAll();
     }
+
+    public Problem getRandomProblemExcludingId(String id){
+        return problemRepository.findRandomExceptId(id);
+    }
 }

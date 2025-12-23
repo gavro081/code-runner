@@ -77,4 +77,9 @@ public class ApiServerController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/problems/random")
+    ResponseEntity<Problem> getRandomProblem(@RequestParam(required = false) String id){
+        return ResponseEntity.ok(problemService.getRandomProblemExcludingId(id));
+    }
 }
