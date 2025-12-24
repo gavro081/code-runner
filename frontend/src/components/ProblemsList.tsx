@@ -88,7 +88,7 @@ export const ProblemsList = () => {
 							isDark ? "text-gray-400" : "text-gray-600"
 						}`}
 					>
-						No problems available
+						No problems available. Please refresh the page.
 					</p>
 				) : (
 					<div className="space-y-3">
