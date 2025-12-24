@@ -164,7 +164,7 @@ public class CodeExecutionService {
             try {
                 exitCode = dockerClient.waitContainerCmd(containerId)
                         .exec(new WaitContainerResultCallback())
-                        .awaitStatusCode(10, TimeUnit.SECONDS);
+                        .awaitStatusCode(5, TimeUnit.SECONDS);
 
             } catch (Exception e) {
                 // timeout occurred

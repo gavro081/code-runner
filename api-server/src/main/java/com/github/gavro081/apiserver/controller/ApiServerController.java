@@ -1,8 +1,6 @@
 package com.github.gavro081.apiserver.controller;
 
-import com.github.gavro081.apiserver.dto.CodeSubmissionDto;
-import com.github.gavro081.apiserver.dto.JobStatusDto;
-import com.github.gavro081.apiserver.dto.ProblemDto;
+import com.github.gavro081.apiserver.dto.*;
 import com.github.gavro081.apiserver.exceptions.JobNotFoundException;
 import com.github.gavro081.apiserver.service.JobService;
 import com.github.gavro081.apiserver.service.ProblemService;
@@ -63,7 +61,7 @@ public class ApiServerController {
     }
 
     @GetMapping("/problems")
-    ResponseEntity<List<Problem>> getProblems(){
+    ResponseEntity<List<ProblemSummaryDto>> getProblems(){
         return ResponseEntity.ok(problemService.getProblems());
     }
 
@@ -79,7 +77,7 @@ public class ApiServerController {
     }
 
     @GetMapping("/problems/random")
-    ResponseEntity<Problem> getRandomProblem(@RequestParam(required = false) String id){
+    ResponseEntity<String> getRandomProblem(@RequestParam(required = false) String id){
         return ResponseEntity.ok(problemService.getRandomProblemExcludingId(id));
     }
 }

@@ -1,7 +1,10 @@
 package com.github.gavro081.apiserver.repository;
 
-import com.github.gavro081.common.model.Problem;
+import com.github.gavro081.apiserver.dto.ProblemSummaryDto;
+
+import java.util.List;
 
 public interface ProblemCustomRepository {
-    Problem findRandomExceptId(String id);
+    String findRandomExceptId(String id);
+    List<ProblemSummaryDto> findAllAsSummaryDto();
 }
