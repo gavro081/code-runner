@@ -154,21 +154,21 @@ While the load test is running, open the RabbitMQ Management UI at [http://local
 ## Project structure
 
 ```
-api-server/                  # REST API + job creation (runs 3 instances)
-code-execution-service/      # Worker: Docker-based sandboxed execution
+api-server/                        # REST API + job creation (runs 3 instances)
+code-execution-service/            # Worker: Docker-based sandboxed execution
   └─ src/main/resources/
-      ├─ docker/             # Dockerfiles for Python & JS runner images
-      └─ templates/          # Test harness templates (python-harness.py, js-harness.js)
-gateway-service/             # Spring Cloud Gateway + load balancer
-common/                      # Shared models, events, and RabbitMQ config
-frontend/                    # React + Vite + CodeMirror + Tailwind CSS
-commands/                    # Load testing scripts (ab, hey)
-diagrams/                    # Architecture & flow diagrams
-docker-compose.yml           # RabbitMQ container
-code_execution_db.problems.json  # Problem seed data for MongoDB
-seed-db.sh                   # Seeds MongoDB with the problem data
-start.sh                     # One-command startup for everything
-check-ports.sh               # Quick health check for all service ports
+      ├─ docker/                   # Dockerfiles for Python & JS runner images
+      └─ templates/                # Test harness templates (python-harness.py, js-harness.js)
+gateway-service/                   # Spring Cloud Gateway + load balancer
+common/                            # Shared models, events, and RabbitMQ config
+frontend/                          # React + Vite + CodeMirror + Tailwind CSS
+commands/                          # Load testing scripts (ab, hey)
+diagrams/                          # Architecture & flow diagrams
+docker-compose.yml                 # RabbitMQ container
+code_execution_db.problems.json    # Problem seed data for MongoDB
+seed-db.sh                         # Seeds MongoDB with the problem data
+start.sh                           # One-command startup for everything
+check-ports.sh                     # Quick health check for all service ports
 ```
 
 ## Tech stack
