@@ -25,19 +25,6 @@ public class JobHandlerService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-//    deprecated
-//    @Transactional
-//    public Job markAndGetJob(UUID uuid) {
-//        Job job = repository.findAndLockBId(uuid)
-//                .orElseThrow(() -> new JobNotFoundException("Job not found: " + uuid));
-//        if (job.getStatus() != JobStatus.PENDING){
-//            // other worker already picked up job
-//            return null;
-//        }
-//        job.setStatus(JobStatus.RUNNING);
-//        return repository.save(job);
-//    }
-
     @Transactional
     public void finalizeJob(JobCreatedEvent job, JobStatus newStatus, String stdout, String stderr){
         Optional<Job> jobOptional = repository.findById(job.jobId());
@@ -62,7 +49,6 @@ public class JobHandlerService {
             jobRecord.setCompletedAt(Instant.now());
             repository.save(jobRecord);
         }
-
 
 
         // create and publish event

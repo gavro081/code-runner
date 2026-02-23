@@ -11,6 +11,7 @@ import com.github.gavro081.common.model.Job;
 import com.github.gavro081.common.model.JobStatus;
 import com.github.gavro081.common.model.ProgrammingLanguage;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +23,12 @@ import static com.github.gavro081.common.config.RabbitMQConstants.EXCHANGE_NAME;
 import static com.github.gavro081.common.config.RabbitMQConstants.JOB_CREATED_ROUTING_KEY;
 
 @Service
+@RequiredArgsConstructor
 public class JobService {
     private final JobRepository jobRepository;
+    private final JobStatusEventStore jobStatusEventStore;
     private final RabbitTemplate rabbitTemplate;
     private final String instanceId;
-
-    public JobService(JobRepository jobRepository, RabbitTemplate rabbitTemplate, String instanceId) {
-        this.jobRepository = jobRepository;
-        this.rabbitTemplate = rabbitTemplate;
-        this.instanceId = instanceId;
-    }
 
     public UUID createJob(CodeSubmissionDto codeSubmissionDto) {
         ProgrammingLanguage language = codeSubmissionDto.language();
@@ -59,20 +56,39 @@ public class JobService {
     }
 
     public JobStatusDto getJobStatus(@NotNull UUID jobId) throws JobNotFoundException{
+        // proper logic isn't fully implemented
+        // no sticky sessions, no clean up on in memory store, may lead to infinite memory usage
+        // but good enough for a demo :)
+
         JobStatus jobStatus;
         String stderr;
         String stdout;
-        Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new JobNotFoundException(String.format("Job %s not found", jobId)));
-        jobStatus = job.getStatus();
-        stderr = job.getStderr();
-        stdout = job.getStdout();
-        System.out.printf("Serving response for job %s from db%n", jobId);
+
+        Optional<JobStatusEvent> jobOptional = jobStatusEventStore.findById(jobId);
+
+        if (jobOptional.isPresent()){
+            JobStatusEvent jobStatusEvent = jobOptional.get();
+            jobStatus = jobStatusEvent.status();
+            stderr = jobStatusEvent.stderr();
+            stdout = jobStatusEvent.stdout();
+            System.out.printf("Serving response for job %s from local state%n", jobId);
+        } else {
+            Job job = jobRepository.findById(jobId)
+                    .orElseThrow(() -> new JobNotFoundException(String.format("Job %s not found", jobId)));
+            jobStatus = job.getStatus();
+            stderr = job.getStderr();
+            stdout = job.getStdout();
+            System.out.printf("Serving response for job %s from db%n", jobId);
+        }
 
         return JobStatusDto.builder()
                 .jobStatus(jobStatus)
                 .stderr(stderr)
                 .stdout(stdout)
                 .build();
+    }
+
+    public void updateJob(JobStatusEvent jobStatusEvent) {
+        jobStatusEventStore.save(jobStatusEvent);
     }
 }
