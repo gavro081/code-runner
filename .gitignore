@@ -4,3 +4,4 @@ about/
 **/__pycache__
 # code_execution_db.problems.json
 **/application.properties
+**/code-executor.excalidraw
