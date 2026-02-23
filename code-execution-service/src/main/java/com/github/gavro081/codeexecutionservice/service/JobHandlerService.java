@@ -9,6 +9,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Optional;
+
 import static com.github.gavro081.common.config.RabbitMQConstants.EXCHANGE_NAME;
 
 
@@ -37,16 +40,30 @@ public class JobHandlerService {
 
     @Transactional
     public void finalizeJob(JobCreatedEvent job, JobStatus newStatus, String stdout, String stderr){
-        repository.save(Job.builder()
-                            .id(job.jobId())
-                            .code(job.code())
-                            .language(job.language())
-                            .status(newStatus)
-                            .stderr(stderr)
-                            .stdout(stdout)
-//                            .completedAt(Instant.now())
-                            .build()
-        );
+        Optional<Job> jobOptional = repository.findById(job.jobId());
+
+        if (jobOptional.isEmpty()){
+            // maybe i should throw an exception
+            repository.save(Job.builder()
+                    .id(job.jobId())
+                    .code(job.code())
+                    .language(job.language())
+                    .status(newStatus)
+                    .stderr(stderr)
+                    .stdout(stdout)
+                    .completedAt(Instant.now())
+                    .build()
+            );
+        } else {
+            Job jobRecord = jobOptional.get();
+            jobRecord.setStatus(newStatus);
+            jobRecord.setStdout(stdout);
+            jobRecord.setStderr(stderr);
+            jobRecord.setCompletedAt(Instant.now());
+            repository.save(jobRecord);
+        }
+
+
 
         // create and publish event
         JobStatusEvent event = JobStatusEvent.builder()

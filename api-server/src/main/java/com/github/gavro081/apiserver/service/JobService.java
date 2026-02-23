@@ -33,13 +33,14 @@ public class JobService {
         this.instanceId = instanceId;
     }
 
-    public UUID createJob(CodeSubmissionDto codeSubmissionDto){
+    public UUID createJob(CodeSubmissionDto codeSubmissionDto) {
         ProgrammingLanguage language = codeSubmissionDto.language();
         String code = codeSubmissionDto.code();
         Job job = Job.builder()
                 .id(UUID.randomUUID())
                 .language(language)
                 .code(code)
+                .createdAt(Instant.now())
                 .status(JobStatus.PENDING)
                 .build();
         jobRepository.save(job);
