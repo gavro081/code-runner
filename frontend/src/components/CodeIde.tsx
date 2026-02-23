@@ -34,6 +34,7 @@ export const CodeIde = () => {
 	const isDark = effectiveTheme === tokyoNight;
 	const [isLoading, setIsLoading] = useState(false);
 	const [jobResult, setJobResult] = useState<JobResult | null>(null);
+	const [isProblemLoading, setIsProblemLoading] = useState(true);
 
 	useEffect(() => {
 		setEffectiveTheme(themeMode === "dark" ? tokyoNight : tokyoNightDay);
@@ -57,12 +58,18 @@ export const CodeIde = () => {
 		if (!problemId) return;
 		setJobResult(null);
 		const fetchData = async () => {
-			const url = `http://localhost:8080/api/problems/${problemId}`;
-			const response = await fetch(url);
-			const data: ProblemView = await response.json();
-			setProblem(data);
-			setCode(data.starterTemplates[language]);
+			try {
+				const url = `http://localhost:8080/api/problems/${problemId}`;
+				const response = await fetch(url);
+				const data: ProblemView = await response.json();
+				setProblem(data);
+				setCode(data.starterTemplates[language]);
+			} catch (err) {
+			} finally {
+				setIsProblemLoading(false);
+			}
 		};
+
 		fetchData();
 	}, [problemId]);
 
@@ -83,7 +90,7 @@ export const CodeIde = () => {
 	const getRandomProblem = async () => {
 		try {
 			const res = await fetch(
-				`http://localhost:8080/api/problems/random?id=${problemId}`
+				`http://localhost:8080/api/problems/random?id=${problemId}`,
 			);
 			const newProblemId: String = await res.text();
 			console.log(newProblemId);
@@ -156,12 +163,27 @@ export const CodeIde = () => {
 		setThemeMode(themeMode === "dark" ? "light" : "dark");
 	};
 
-	if (!problem)
-		return (
+	if (!problem) {
+		return isProblemLoading ? (
 			<div className="h-screen w-screen flex items-center justify-center bg-gray-900">
 				<Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
 			</div>
+		) : (
+			<div className="h-screen w-screen items-center justify-center bg-gray-900 flex flex-col gap-4">
+				<p className="text-lg text-gray-100">No problem found</p>
+				<button
+					onClick={getRandomProblem}
+					className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+						isDark
+							? "bg-blue-600 hover:bg-blue-700 text-white"
+							: "bg-blue-500 hover:bg-blue-600 text-white"
+					}`}
+				>
+					Try a random problem
+				</button>
+			</div>
 		);
+	}
 
 	return (
 		<div className="h-screen w-screen">
@@ -197,7 +219,7 @@ export const CodeIde = () => {
 										<span
 											className={`px-2 py-1 text-xs rounded ${getDifficultyColor(
 												problem.difficulty,
-												isDark
+												isDark,
 											)}`}
 										>
 											{/* change color for difficulties */}
@@ -254,7 +276,7 @@ export const CodeIde = () => {
 														>
 															{example.input.substring(
 																1,
-																example.input.length - 1
+																example.input.length - 1,
 															)}
 														</code>
 													</div>
