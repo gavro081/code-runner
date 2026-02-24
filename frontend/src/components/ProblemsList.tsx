@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react";
+import { Moon, Plus, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Problem } from "../utils/consts";
@@ -69,17 +69,30 @@ export const ProblemsList = () => {
 							Select a problem to start coding
 						</p>
 					</div>
-					<button
-						onClick={toggleTheme}
-						className={`${
-							isDark
-								? "bg-gray-700 hover:bg-gray-600 text-white"
-								: "bg-gray-200 hover:bg-gray-300 text-gray-900"
-						} p-2 rounded-lg transition-colors cursor-pointer`}
-						title={`Switch to ${themeMode === "dark" ? "light" : "dark"} mode`}
-					>
-						{themeMode === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-					</button>
+					<div className="flex items-center gap-2">
+						<button
+							onClick={() => navigate("/add-problem")}
+							className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+								isDark
+									? "bg-blue-600 hover:bg-blue-700 text-white"
+									: "bg-blue-500 hover:bg-blue-600 text-white"
+							}`}
+						>
+							<Plus size={16} />
+							Add Problem
+						</button>
+						<button
+							onClick={toggleTheme}
+							className={`${
+								isDark
+									? "bg-gray-700 hover:bg-gray-600 text-white"
+									: "bg-gray-200 hover:bg-gray-300 text-gray-900"
+							} p-2 rounded-lg transition-colors cursor-pointer`}
+							title={`Switch to ${themeMode === "dark" ? "light" : "dark"} mode`}
+						>
+							{themeMode === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+						</button>
+					</div>
 				</div>
 
 				{problems.length === 0 ? (
@@ -113,7 +126,7 @@ export const ProblemsList = () => {
 									<span
 										className={`px-3 py-1 text-xs rounded font-medium ${getDifficultyColor(
 											problem.difficulty,
-											isDark
+											isDark,
 										)}`}
 									>
 										{problem.difficulty}

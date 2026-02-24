@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -15,6 +16,7 @@ import jakarta.persistence.Column;
 
 @Document(collection = "problems")
 @Getter @Setter
+@Builder
 public class Problem implements Serializable {
     @Id
     @Column(name = "id")

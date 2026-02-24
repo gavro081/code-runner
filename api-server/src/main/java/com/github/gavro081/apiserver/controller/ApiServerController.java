@@ -8,6 +8,7 @@ import com.github.gavro081.common.model.Problem;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,5 +80,11 @@ public class ApiServerController {
     @GetMapping("/problems/random")
     ResponseEntity<String> getRandomProblem(@RequestParam(required = false) String id){
         return ResponseEntity.ok(problemService.getRandomProblemExcludingId(id));
+    }
+
+    @PostMapping("/problems")
+    public ResponseEntity<Void> createProblem(@Valid @RequestBody CreateProblemDto problemDto){
+        problemService.createProblem(problemDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
