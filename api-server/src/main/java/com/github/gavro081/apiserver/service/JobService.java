@@ -8,12 +8,14 @@ import com.github.gavro081.apiserver.repository.JobStatusEventStore;
 import com.github.gavro081.common.events.JobCreatedEvent;
 import com.github.gavro081.common.events.JobStatusEvent;
 import com.github.gavro081.common.model.Job;
-import com.github.gavro081.common.model.JobStatus;
-import com.github.gavro081.common.model.ProgrammingLanguage;
+import com.github.gavro081.common.model.enums.JobStatus;
+import com.github.gavro081.common.model.enums.ProgrammingLanguage;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -74,7 +76,10 @@ public class JobService {
             System.out.printf("Serving response for job %s from local state%n", jobId);
         } else {
             Job job = jobRepository.findById(jobId)
-                    .orElseThrow(() -> new JobNotFoundException(String.format("Job %s not found", jobId)));
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, String.format("Job with ID %s not found", jobId)
+                            )
+                    );
             jobStatus = job.getStatus();
             stderr = job.getStderr();
             stdout = job.getStdout();

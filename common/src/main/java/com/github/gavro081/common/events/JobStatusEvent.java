@@ -1,8 +1,7 @@
 package com.github.gavro081.common.events;
 
-import com.github.gavro081.common.model.JobStatus;
+import com.github.gavro081.common.model.enums.JobStatus;
 import lombok.Builder;
-import lombok.Setter;
 
 import java.util.UUID;
 

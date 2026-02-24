@@ -102,7 +102,9 @@ export const CodeIde = () => {
 		const poll = setInterval(async () => {
 			console.log("polling status...");
 			try {
-				const res = await fetch(`http://localhost:8080/api/status/${jobId}`);
+				const res = await fetch(
+					`http://localhost:8080/api/problems/status/${jobId}`,
+				);
 				const jobResult: JobResult = await res.json();
 				if (
 					jobResult.jobStatus === "COMPLETED" ||
@@ -132,13 +134,16 @@ export const CodeIde = () => {
 		setIsLoading(true);
 		setJobResult(null);
 		try {
-			const response = await fetch("http://localhost:8080/api/submit", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
+			const response = await fetch(
+				"http://localhost:8080/api/problems/submit",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ code, language, problemId }),
 				},
-				body: JSON.stringify({ code, language, problemId }),
-			});
+			);
 			const result = await response.json();
 			console.log("Response:", result);
 			pollJobStatus(result.job_id);

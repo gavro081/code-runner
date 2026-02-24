@@ -9,7 +9,7 @@ import com.github.gavro081.codeexecutionservice.service.CodeExecutionService;
 import com.github.gavro081.codeexecutionservice.service.JobHandlerService;
 import com.github.gavro081.common.config.RabbitMQConstants;
 import com.github.gavro081.common.events.JobCreatedEvent;
-import com.github.gavro081.common.model.JobStatus;
+import com.github.gavro081.common.model.enums.JobStatus;
 
 @Component
 @RabbitListener(id = "jobListener", queues = RabbitMQConstants.WORKER_QUEUE, containerFactory = "jobListenerFactory")

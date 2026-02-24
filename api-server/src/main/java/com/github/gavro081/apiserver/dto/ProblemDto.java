@@ -1,6 +1,6 @@
 package com.github.gavro081.apiserver.dto;
 
-import com.github.gavro081.common.model.ProgrammingLanguage;
+import com.github.gavro081.common.model.enums.ProgrammingLanguage;
 import com.github.gavro081.common.model.TestCase;
 import lombok.Builder;
 

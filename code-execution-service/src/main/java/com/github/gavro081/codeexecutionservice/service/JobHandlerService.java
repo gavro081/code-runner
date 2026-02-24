@@ -4,7 +4,7 @@ import com.github.gavro081.codeexecutionservice.repository.JobHandlerRepository;
 import com.github.gavro081.common.events.JobCreatedEvent;
 import com.github.gavro081.common.events.JobStatusEvent;
 import com.github.gavro081.common.model.Job;
-import com.github.gavro081.common.model.JobStatus;
+import com.github.gavro081.common.model.enums.JobStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;

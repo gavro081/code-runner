@@ -2,13 +2,14 @@ package com.github.gavro081.apiserver.service;
 
 
 import com.github.gavro081.apiserver.dto.CreateProblemDto;
+import com.github.gavro081.apiserver.dto.ProblemDto;
 import com.github.gavro081.apiserver.dto.ProblemSummaryDto;
 import com.github.gavro081.apiserver.repository.ProblemRepository;
 import com.github.gavro081.common.model.Problem;
-import com.github.gavro081.common.model.ProgrammingLanguage;
+import com.github.gavro081.common.model.enums.ProgrammingLanguage;
 import com.github.gavro081.common.model.TestCase;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,13 +18,26 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProblemService {
     private final ProblemRepository problemRepository;
 
-    public Problem getProblem(String problemId){
-        return problemRepository.findById(problemId)
-                .orElseThrow(() -> new RuntimeException(String.format("Problem with ID %s not found", problemId)));
+    public ProblemDto getProblemDto(String problemId){
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, String.format("Problem with ID %s not found", problemId)
+                        )
+                );
+
+        return ProblemDto.builder()
+                .title(problem.getTitle())
+                .assumptions(problem.getAssumptions())
+                .difficulty(problem.getDifficulty())
+                .exampleTestCases(problem.getExampleTestCases())
+                .description(problem.getDescription())
+                .starterTemplates(problem.getStarterTemplates())
+                .constraints(problem.getConstraints())
+                .build();
     }
 
     public List<ProblemSummaryDto> getProblems(){

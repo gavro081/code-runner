@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.gavro081.codeexecutionservice.models.ExecutionResult;
 import com.github.gavro081.common.events.JobCreatedEvent;
 import com.github.gavro081.common.model.Problem;
-import com.github.gavro081.common.model.ProgrammingLanguage;
+import com.github.gavro081.common.model.enums.ProgrammingLanguage;
 import com.github.gavro081.common.model.TestCase;
 
 class FullSystemIntegrationTest {

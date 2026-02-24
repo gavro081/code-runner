@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.github.gavro081.common.model.enums.ProgrammingLanguage;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

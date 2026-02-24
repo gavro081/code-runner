@@ -1,5 +1,7 @@
 package com.github.gavro081.common.model;
 
+import com.github.gavro081.common.model.enums.JobStatus;
+import com.github.gavro081.common.model.enums.ProgrammingLanguage;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

@@ -1,6 +1,6 @@
 package com.github.gavro081.common.events;
 
-import com.github.gavro081.common.model.ProgrammingLanguage;
+import com.github.gavro081.common.model.enums.ProgrammingLanguage;
 import lombok.*;
 
 import java.io.Serializable;

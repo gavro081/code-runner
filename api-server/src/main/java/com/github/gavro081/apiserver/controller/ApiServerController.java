@@ -17,22 +17,14 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/problems")
 public class ApiServerController {
     private final JobService jobService;
     private final ProblemService problemService;
 
-    @Value("${server.port}")
-    private String port;
-
     public ApiServerController(JobService jobService, ProblemService problemService) {
         this.jobService = jobService;
         this.problemService = problemService;
-    }
-
-    @GetMapping
-    String index(){
-        return "api index: " + port;
     }
 
     @PostMapping("/submit")
@@ -41,48 +33,27 @@ public class ApiServerController {
         return ResponseEntity.accepted().body(Map.of("job_id", jobId));
     }
 
-    @GetMapping("/problems/{problemId}")
+    @GetMapping("/{problemId}")
     ResponseEntity<ProblemDto> getProblem(@PathVariable @NotNull String problemId){
-        try {
-            Problem p = problemService.getProblem(problemId);
-            ProblemDto problemDto = ProblemDto.builder()
-                    .title(p.getTitle())
-                    .assumptions(p.getAssumptions())
-                    .difficulty(p.getDifficulty())
-                    .exampleTestCases(p.getExampleTestCases())
-                    .description(p.getDescription())
-                    .starterTemplates(p.getStarterTemplates())
-                    .constraints(p.getConstraints())
-                    .build();
-            return ResponseEntity.ok(problemDto);
-        } catch (Exception e){
-            return ResponseEntity.notFound().build();
-        }
-
+        return ResponseEntity.ok(problemService.getProblemDto(problemId));
     }
 
-    @GetMapping("/problems")
+    @GetMapping()
     ResponseEntity<List<ProblemSummaryDto>> getProblems(){
         return ResponseEntity.ok(problemService.getProblems());
     }
 
-
     @GetMapping("/status/{jobId}")
     ResponseEntity<JobStatusDto> checkJobStatus(@PathVariable @NotNull UUID jobId){
-        try{
-            JobStatusDto jobStatusDto = jobService.getJobStatus(jobId);
-            return ResponseEntity.ok(jobStatusDto);
-        } catch (JobNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(jobService.getJobStatus(jobId));
     }
 
-    @GetMapping("/problems/random")
+    @GetMapping("/random")
     ResponseEntity<String> getRandomProblem(@RequestParam(required = false) String id){
         return ResponseEntity.ok(problemService.getRandomProblemExcludingId(id));
     }
 
-    @PostMapping("/problems")
+    @PostMapping()
     public ResponseEntity<Void> createProblem(@Valid @RequestBody CreateProblemDto problemDto){
         problemService.createProblem(problemDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();

@@ -29,7 +29,7 @@ import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
 import com.github.gavro081.codeexecutionservice.models.ExecutionResult;
 import com.github.gavro081.common.events.JobCreatedEvent;
-import com.github.gavro081.common.model.ProgrammingLanguage;
+import com.github.gavro081.common.model.enums.ProgrammingLanguage;
 
 import jakarta.annotation.PostConstruct;
 

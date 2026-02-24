@@ -1,6 +1,6 @@
 package com.github.gavro081.apiserver.dto;
 
-import com.github.gavro081.common.model.JobStatus;
+import com.github.gavro081.common.model.enums.JobStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
