@@ -13,9 +13,9 @@ A web platform where you solve coding problems and get instant feedback - code r
 | **API Server**             | Handles problems, code submissions, and job status polling; publishes jobs to RabbitMQ                                                 |
 | **Code Execution Service** | Consumes jobs from the queue, injects user code into a language-specific test harness, and runs it inside a sandboxed Docker container |
 | **Common**                 | Shared library (DTOs, JPA entities, RabbitMQ constants) used by the other backend modules                                              |
-| **RabbitMQ**               | Message broker — carries job events between the API Server and the execution worker                                                    |
-| **PostgreSQL**             | Stores job records (status, stdout, stderr)                                                                                            |
-| **MongoDB**                | Stores coding problems, test cases, and starter templates (read-only at runtime)                                                       |
+| **RabbitMQ**               | Message broker - carries job events between the API Server and the execution worker                                                    |
+| **PostgreSQL**             | Stores job records (code, timestamps, status, stdout, stderr)                                                                                            |
+| **MongoDB**                | Stores coding problems, test cases, and starter templates                                                    |
 
 ### Ports
 
