@@ -14,8 +14,8 @@ A web platform where you solve coding problems and get instant feedback - code r
 | **Code Execution Service** | Consumes jobs from the queue, injects user code into a language-specific test harness, and runs it inside a sandboxed Docker container |
 | **Common**                 | Shared library (DTOs, JPA entities, RabbitMQ constants) used by the other backend modules                                              |
 | **RabbitMQ**               | Message broker - carries job events between the API Server and the execution worker                                                    |
-| **PostgreSQL**             | Stores job records (code, timestamps, status, stdout, stderr)                                                                                            |
-| **MongoDB**                | Stores coding problems, test cases, and starter templates                                                    |
+| **PostgreSQL**             | Stores job records (code, timestamps, status, stdout, stderr)                                                                          |
+| **MongoDB**                | Stores coding problems, test cases, and starter templates                                                                              |
 
 ### Ports
 
@@ -86,8 +86,8 @@ CREATE DATABASE code_runner_db;
 Seed MongoDB with the included problem set:
 
 ```bash
-chmod +x seed-db.sh
-./seed-db.sh
+chmod +x commands/seed-db.sh
+./commands/seed-db.sh
 ```
 
 This imports the problems from `code_execution_db.problems.json` into the `code_execution_db.problems` collection. Requires [MongoDB Database Tools](https://www.mongodb.com/docs/database-tools/installation/) (`mongoimport`).
@@ -112,7 +112,7 @@ Once running, open [http://localhost:5173](http://localhost:5173).
 You can verify all ports with:
 
 ```bash
-./check-ports.sh
+./commands/check-ports.sh
 ```
 
 ## Load testing
@@ -162,13 +162,10 @@ code-execution-service/            # Worker: Docker-based sandboxed execution
 gateway-service/                   # Spring Cloud Gateway + load balancer
 common/                            # Shared models, events, and RabbitMQ config
 frontend/                          # React + Vite + CodeMirror + Tailwind CSS
-commands/                          # Load testing scripts (ab, hey)
+commands/                          # shell scripts for load testing, setting up mongodb, checking ports
 diagrams/                          # Architecture & flow diagrams
 docker-compose.yml                 # RabbitMQ container
-code_execution_db.problems.json    # Problem seed data for MongoDB
-seed-db.sh                         # Seeds MongoDB with the problem data
 start.sh                           # One-command startup for everything
-check-ports.sh                     # Quick health check for all service ports
 ```
 
 ## Tech stack
