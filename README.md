@@ -1,3 +1,6 @@
+# [DEPRECATED]
+# UPDATE BEFORE MERGING WITH MAIN
+
 # Code Runner
 
 A web platform where you solve coding problems and get instant feedback - code runs in sandboxed Docker containers on the backend.

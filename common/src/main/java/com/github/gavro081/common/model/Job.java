@@ -2,16 +2,15 @@ package com.github.gavro081.common.model;
 
 import com.github.gavro081.common.model.enums.JobStatus;
 import com.github.gavro081.common.model.enums.ProgrammingLanguage;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
-@Table(name = "jobs")
+@Document(collection = "jobs")
 @Getter @Setter
 @Builder
 @AllArgsConstructor
@@ -20,31 +19,22 @@ public class Job {
     @Id
     private UUID id;
 
-    @Enumerated(EnumType.STRING)
     @NotNull(message = "Status is required")
     private JobStatus status;
 
-    @Enumerated(EnumType.STRING)
     @NotNull(message = "Programming language is required")
     private ProgrammingLanguage language;
 
-    @Column(columnDefinition = "TEXT")
     private String code;
 
-    @Column(columnDefinition = "TEXT")
     private String stdin;
 
-    @Column(columnDefinition = "TEXT")
     private String stdout;
 
-    @Column(columnDefinition = "TEXT")
     private String stderr;
 
-    @CreationTimestamp
-    @Column(name = "created_at")
     private Instant createdAt;
 
-    @Column(name = "completed_at")
     private Instant completedAt;
 
 }

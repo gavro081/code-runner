@@ -13,14 +13,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
-import jakarta.persistence.Column;
-
 @Document(collection = "problems")
 @Getter @Setter
 @Builder
 public class Problem implements Serializable {
     @Id
-    @Column(name = "id")
     @JsonAlias("_id")
     private String id;
 
