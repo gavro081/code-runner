@@ -72,6 +72,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # enables building the arm64 variant on the amd64 runner via emulation
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -100,6 +104,8 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
           push: true
+          # multi-arch so images pull on both amd64 (CI/cloud) and arm64 (local Apple Silicon k3d)
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build-args }}
