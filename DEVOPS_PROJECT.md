@@ -21,7 +21,7 @@ multiple backends + 2 databases + message broker).
 | 1  | 10%    | App on a **public git repository** | ✅ already done — https://github.com/gavro081/code-runner |
 | 2  | 10%    | **Dockerize** the application | ✅ done — multi-stage Dockerfiles for all services + frontend (nginx) |
 | 3  | 10%    | **Orchestrate** app + database with **Docker Compose** | ✅ done — full stack in `docker-compose.yml`, end-to-end submit verified |
-| 4  | 20%    | Choose a **CI platform** (GitHub Actions / GitLab CI / Jenkins…) and set up a pipeline: on `git push`, build the new Docker image version and push it to a **registry** (e.g. DockerHub). **Bonus:** add a CD stage that deploys to a real environment (server / cloud / Kubernetes / Argo CD). | ⬜ not started |
+| 4  | 20%    | Choose a **CI platform** (GitHub Actions / GitLab CI / Jenkins…) and set up a pipeline: on `git push`, build the new Docker image version and push it to a **registry** (e.g. DockerHub). **Bonus:** add a CD stage that deploys to a real environment (server / cloud / Kubernetes / Argo CD). | 🟨 CI done (`.github/workflows/ci.yml` → DockerHub); CD (Argo CD) bonus pending |
 | 5  | 10%    | Kubernetes **Deployment** for the app + needed **ConfigMaps/Secrets** | ⬜ not started |
 | 6  | 10%    | Kubernetes **Service** for the app | ⬜ not started |
 | 7  | 10%    | Kubernetes **Ingress** for the app | ⬜ not started |
@@ -246,6 +246,28 @@ Append dated entries as work happens so a future session sees exactly where thin
     overriding the packaged `application.properties`. No creds baked into images.
   - **`start.sh` is now superseded** by `docker compose up` (it would both `compose up` the full stack and re-run the
     services via Maven — don't use it anymore). Left in place for reference; safe to delete later.
+- **2026-06-16** — **CI pipeline (pt 4, CI half)** on branch `feature/ci-pipeline`. Added
+  `.github/workflows/ci.yml` (GitHub Actions). Details:
+  - **Triggers:** push to `dev` (with `paths-ignore` for docs/scripts — `**.md`, `LICENSE`, `about/`,
+    `diagrams/`, `commands/`, `.gitignore`, `.idea/`), push of `v*` tags (releases; path filters don't apply
+    to tag pushes so a release always builds), and manual `workflow_dispatch`. **No `main` trigger** — main
+    is built only via the final release tag. `concurrency` cancels superseded runs on the same ref.
+  - **`validate` job** — lightweight Maven compile gate (`-DskipTests`): `mvn install` for the reactor
+    (common + api-server, also installs `common` to the local repo), then `package` for the two standalone
+    modules (gateway, code-execution-service). Spring `contextLoads` tests need live Mongo/RabbitMQ so they're
+    skipped, same as the Dockerfiles. **Verified locally — all three steps pass on Java 17 / Maven 3.9.11.**
+  - **`build-images` job** (`needs: validate`) — a **matrix over the 4 services** builds + pushes in parallel
+    via `docker/build-push-action`. Matches the Compose build topology: api-server & code-execution-service
+    use the **repo-root** context, gateway & frontend their own dirs; frontend passes `VITE_API_BASE_URL=`
+    (empty → relative `/api`). Per-service GHA layer cache (`scope=<name>`).
+  - **Image names:** `gavro081/code-runner-<service>` (one DockerHub repo each). **Tags** via
+    `docker/metadata-action`: branch (`dev`) + short-sha always; full/major.minor **semver** + `latest`
+    (`flavor: latest=auto`) only on `v*` tag builds. The immutable sha/semver tags are deliberate so the
+    future Argo CD step can pin a specific version.
+  - **Secrets (manual, in GitHub UI):** `DOCKERHUB_USERNAME` (`gavro081`) + `DOCKERHUB_TOKEN` (a DockerHub
+    Read & Write access token). Not committed; the workflow reads them via `docker/login-action`.
+  - **CD bonus (Argo CD) NOT yet built** — workflow is structured so a deploy / manifest-bump job slots on
+    later without restructuring. See **Still open**.
 
 ---
 
