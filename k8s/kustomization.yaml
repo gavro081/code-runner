@@ -6,7 +6,9 @@ namespace: code-runner
 resources:
   - namespace.yaml
   - config.yaml
-  - secret.yaml
+  # NOTE: secret.yaml is intentionally NOT listed here. It is gitignored (real creds), so it
+  # can't be GitOps-synced. Apply it once as a bootstrap step before Argo CD / kubectl apply:
+  #   kubectl apply -n code-runner -f k8s/secret.yaml   (copy from secret.example.yaml first)
   - mongo.yaml
   - rabbitmq.yaml
   - api-server.yaml

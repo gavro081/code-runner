@@ -21,7 +21,7 @@ multiple backends + 2 databases + message broker).
 | 1  | 10%    | App on a **public git repository** | ✅ already done — https://github.com/gavro081/code-runner |
 | 2  | 10%    | **Dockerize** the application | ✅ done — multi-stage Dockerfiles for all services + frontend (nginx) |
 | 3  | 10%    | **Orchestrate** app + database with **Docker Compose** | ✅ done — full stack in `docker-compose.yml`, end-to-end submit verified |
-| 4  | 20%    | Choose a **CI platform** (GitHub Actions / GitLab CI / Jenkins…) and set up a pipeline: on `git push`, build the new Docker image version and push it to a **registry** (e.g. DockerHub). **Bonus:** add a CD stage that deploys to a real environment (server / cloud / Kubernetes / Argo CD). | 🟨 CI done (`.github/workflows/ci.yml` → DockerHub); CD (Argo CD) bonus pending |
+| 4  | 20%    | Choose a **CI platform** (GitHub Actions / GitLab CI / Jenkins…) and set up a pipeline: on `git push`, build the new Docker image version and push it to a **registry** (e.g. DockerHub). **Bonus:** add a CD stage that deploys to a real environment (server / cloud / Kubernetes / Argo CD). | ✅ done — CI (`.github/workflows/ci.yml` → DockerHub) **+ CD bonus**: Argo CD GitOps (`argocd/application.yaml`) auto-syncs `dev` → cluster |
 | 5  | 10%    | Kubernetes **Deployment** for the app + needed **ConfigMaps/Secrets** | ✅ done — Deployments for all 5 services + `app-config` ConfigMap + `app-secret` Secret (`k8s/`) |
 | 6  | 10%    | Kubernetes **Service** for the app | ✅ done — ClusterIP Services; `api-server` Service load-balances 3 replicas |
 | 7  | 10%    | Kubernetes **Ingress** for the app | ✅ done — Traefik Ingress (`code-runner.localhost`): `/api`→gateway, `/`→frontend |
@@ -179,8 +179,9 @@ Order chosen so each step unblocks the next. Each gets its own feature branch of
   where `API_BASE_URL` defaults to `""` (relative). In Compose, nginx proxies `/api` → gateway; in dev,
   the Vite proxy does the same. Build-time `VITE_API_BASE_URL` arg remains available as an override.
 - [x] Standard **JDK version**: **17** across all poms (synced 2026-06-16).
-- [ ] CD mechanism for the bonus: **Argo CD** (GitOps) — manifests in `k8s/` are kustomize-ready for it; the
-  `images:` block is the single tag source an Argo CD Image Updater / CI bump step can write to. **Next task.**
+- [x] CD mechanism for the bonus: **Argo CD** (GitOps) — `argocd/application.yaml` tracks `dev` → `k8s/`,
+  automated sync (prune + self-heal). The `images:` block is the single tag source a future Argo CD Image
+  Updater / CI bump step can write to.
 
 ---
 
@@ -290,6 +291,13 @@ Append dated entries as work happens so a future session sees exactly where thin
     kustomization `images:` block (`kustomize edit set image …` to bump). CI now also `paths-ignore`s `k8s/**`
     so manifest-only changes don't rebuild images.
   - **Access:** `http://code-runner.localhost/` (macOS auto-resolves `*.localhost`; k3d maps host :80 → Traefik).
+- **2026-06-16** — **CD bonus (Argo CD)** — pt 4 bonus complete. Installed Argo CD (`argocd` namespace) and
+  registered `argocd/application.yaml`: an Argo `Application` tracking the **`dev`** branch → path `k8s/`
+  (kustomize) → namespace `code-runner`, with **automated sync (prune + self-heal)** = true GitOps. Pushing a
+  manifest change to `dev` now auto-deploys; manual drift is self-healed. **Secret handling:** `secret.yaml`
+  stays gitignored and was removed from the kustomization — it's provisioned **out-of-band** as a one-time
+  bootstrap (`kubectl apply -n code-runner -f k8s/secret.yaml`), the standard GitOps "secrets not in git"
+  pattern; Argo manages everything else. CI now also `paths-ignore`s `argocd/**`.
 
 ---
 

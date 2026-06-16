@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: code-runner
+  namespace: argocd
+  # keep the Application around if someone deletes it without cascading to the workloads
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/gavro081/code-runner.git
+    targetRevision: dev # track dev branch
+    path: k8s # kustomize dir (argo auto-detects kustomization.yaml)
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: code-runner
+
+  syncPolicy:
+    automated:
+      prune: true # delete resources removed from git
+      selfHeal: true # revert manual drift back to git state
+    syncOptions:
+      - CreateNamespace=true # create the code-runner namespace if missing
+  # the app-secret is provisioned out-of-band (see k8s/kustomization.yaml); argo doesn't manage it.

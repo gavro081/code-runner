@@ -11,6 +11,7 @@ on:
       - 'diagrams/**'
       - 'commands/**'
       - 'k8s/**' # k8s manifests don't change the images, so don't rebuild on manifest-only edits
+      - 'argocd/**' # argo cd config doesn't change the images either
       - '.gitignore'
       - '.idea/**'
   workflow_dispatch: {}
