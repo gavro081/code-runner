@@ -20,7 +20,7 @@ multiple backends + 2 databases + message broker).
 |----|--------|-------------|--------|
 | 1  | 10%    | App on a **public git repository** | ✅ already done — https://github.com/gavro081/code-runner |
 | 2  | 10%    | **Dockerize** the application | ⬜ not started |
-| 3  | 10%    | **Orchestrate** app + database with **Docker Compose** | 🟡 partial prior attempt exists (`docker-attempt` branch) |
+| 3  | 10%    | **Orchestrate** app + database with **Docker Compose** | ⬜ not started |
 | 4  | 20%    | Choose a **CI platform** (GitHub Actions / GitLab CI / Jenkins…) and set up a pipeline: on `git push`, build the new Docker image version and push it to a **registry** (e.g. DockerHub). **Bonus:** add a CD stage that deploys to a real environment (server / cloud / Kubernetes / Argo CD). | ⬜ not started |
 | 5  | 10%    | Kubernetes **Deployment** for the app + needed **ConfigMaps/Secrets** | ⬜ not started |
 | 6  | 10%    | Kubernetes **Service** for the app | ⬜ not started |
@@ -117,7 +117,7 @@ These are the things that will actually take thought during dockerization / k8s.
 
 ### 5.1 ⚠️ Docker-in-Docker for the execution service (THE big one)
 `code-execution-service` creates sandbox containers via the host Docker daemon. Implications:
-- **Docker Compose:** mount `/var/run/docker.sock` into the container (the `docker-attempt` branch did this with `privileged: true` + the socket volume). The sandbox images (`python-coderunner-image`, `javascript-coderunner-image`) must be **built and present on the host** beforehand — the service references them by name, it does not build them.
+- **Docker Compose:** mount `/var/run/docker.sock` into the container. The sandbox images (`python-coderunner-image`, `javascript-coderunner-image`) must be **built and present on the host** beforehand — the service references them by name, it does not build them.
 - **Kubernetes:** no Docker daemon by default (containerd). Options to evaluate:
   1. **DinD sidecar** (`docker:dind`) next to the exec service, sharing a network/socket — most faithful, needs `privileged`.
   2. Mount the node's container runtime socket — brittle / not containerd-compatible with docker-java.
@@ -128,7 +128,7 @@ These are the things that will actually take thought during dockerization / k8s.
 ### 5.2 Gateway service discovery
 - Current gateway uses a **static** `spring.cloud.discovery.client.simple` list of `localhost:8081-8083`.
 - In Compose/K8s there's no fixed instance list. Approaches:
-  - **Compose:** scale `api-server` (`deploy.replicas: 3`) and route to `http://api-server:8080`; Docker's internal DNS round-robins. (`docker-attempt` did exactly this.)
+  - **Compose:** scale `api-server` (`deploy.replicas: 3`) and route to `http://api-server:8080`; Docker's internal DNS round-robins.
   - **K8s:** a `Service` in front of the api-server `Deployment` gives a stable DNS name + load balancing; gateway routes to `http://api-server:8080`.
 - → The per-instance UUID reply-queue design still works fine behind a Service (each pod still has its own queue).
 
@@ -143,7 +143,7 @@ These are the things that will actually take thought during dockerization / k8s.
 - Maps cleanly onto the rubric: **one StatefulSet for MongoDB** (with a PVC) satisfies pt 8. RabbitMQ can be a separate StatefulSet or a plain Deployment. (No more Postgres StatefulSet to worry about — this is the payoff of the consolidation.)
 
 ### 5.5 Java version & image base
-- ✅ JDK standardized on **17** across all five poms (done 2026-06-16). Use a Java 17 base image (`eclipse-temurin:17-jdk` for the build stage, `-jre-alpine` for runtime) with **multi-stage builds** (Maven build stage → slim JRE runtime) so we don't depend on a pre-built `target/*.jar` like the `docker-attempt` Dockerfiles did.
+- ✅ JDK standardized on **17** across all five poms (done 2026-06-16). Use a Java 17 base image (`eclipse-temurin:17-jdk` for the build stage, `-jre-alpine` for runtime) with **multi-stage builds** (Maven build stage → slim JRE runtime) so we don't depend on a pre-built `target/*.jar`.
 - Remember the standalone-module quirk: build `common` first (install to local repo), or restructure so all four are reactor modules / build each independently in its own Dockerfile.
 
 ### 5.6 Secrets
@@ -153,17 +153,7 @@ These are the things that will actually take thought during dockerization / k8s.
 
 ## 6. Existing assets & prior attempts
 
-- **`docker-attempt` branch** (diverged, experimental — do NOT blindly merge): contains an early dockerization.
-  Useful reference patterns:
-  - `docker-compose.yml` with all services, `api-server` scaled to 3 replicas, gateway → `http://api-server:8080`,
-    and `code-execution-service` with `privileged: true` + `/var/run/docker.sock` mount + `host.docker.internal`.
-  - Simple (single-stage, copy-prebuilt-jar) Dockerfiles for gateway/api/exec on `eclipse-temurin:23-jdk-alpine`.
-  - ⚠️ Caveats: it **renamed** `gateway-service`→`gateway-server`, **deleted** `AddProblem.tsx` & other frontend
-    components, moved `common` enums (`model/enums/*` → `model/*`), and dropped `start.sh`/seed script. It's based on
-    an older app state than `dev`. Treat it as inspiration only; reimplement cleanly on `dev`.
-  - No frontend Dockerfile and no Kubernetes manifests exist in any branch yet.
-- **Tooling present locally:** Docker 28.1.1, kubectl v1.32.2 (kustomize bundled). **Missing:** minikube / kind / helm
-  (no local cluster yet — needs install for points 5–9). `kubectl` has no current-context set.
+- Nothing worth noting
 
 ---
 
