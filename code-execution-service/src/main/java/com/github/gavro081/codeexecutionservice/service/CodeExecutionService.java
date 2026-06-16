@@ -2,13 +2,18 @@ package com.github.gavro081.codeexecutionservice.service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.gavro081.codeexecutionservice.models.TestCasesProjection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -18,6 +23,7 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.WaitContainerResultCallback;
+import com.github.dockerjava.api.exception.NotFoundException;
 import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.LogConfig;
@@ -25,6 +31,7 @@ import com.github.dockerjava.api.model.StreamType;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
+import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
 import com.github.gavro081.codeexecutionservice.models.ExecutionResult;
@@ -36,6 +43,7 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class CodeExecutionService {
+    private static final Logger log = LoggerFactory.getLogger(CodeExecutionService.class);
     private DockerClient dockerClient;
     private final Map<ProgrammingLanguage, LanguageConfig> languageConfigMap = new EnumMap<>(ProgrammingLanguage.class);
     private final ProblemService problemService;
@@ -59,6 +67,11 @@ public class CodeExecutionService {
 
     private record LanguageConfig(String imageName, String... command){}
 
+    // map each sandbox image to the Dockerfile (on the classpath) that builds it.
+    private static final Map<String, String> SANDBOX_IMAGE_DOCKERFILES = Map.of(
+            "python-coderunner-image", "classpath:docker/Dockerfile.python",
+            "javascript-coderunner-image", "classpath:docker/Dockerfile.javascript");
+
     @PostConstruct
     public void init(){
         DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder().build();
@@ -78,6 +91,56 @@ public class CodeExecutionService {
         languageConfigMap.put(
                 ProgrammingLanguage.JAVASCRIPT,
                 new LanguageConfig("javascript-coderunner-image", "node", "-e"));
+
+        ensureSandboxImages();
+    }
+
+    // sandbox images are references by name when launching containers and they must exist
+    // on the Docker dameon. if they don't exist, build them here programatically, no need for manual downloads
+    private void ensureSandboxImages() {
+        SANDBOX_IMAGE_DOCKERFILES.forEach((imageName, dockerfileResource) -> {
+            try {
+                dockerClient.inspectImageCmd(imageName).exec();
+                log.info("Sandbox image '{}' already present", imageName);
+            } catch (NotFoundException notFound) {
+                buildSandboxImage(imageName, dockerfileResource);
+            } catch (Exception e) {
+                log.error("Could not check for sandbox image '{}': {}", imageName, e.getMessage());
+            }
+        });
+    }
+
+    private void buildSandboxImage(String imageName, String dockerfileResource) {
+        log.info("Sandbox image '{}' not found, building from {} ...", imageName, dockerfileResource);
+        Path tempDir = null;
+        try {
+            tempDir = Files.createTempDirectory("coderunner-build-");
+            Path dockerfile = tempDir.resolve("Dockerfile");
+            try (var in = resourceLoader.getResource(dockerfileResource).getInputStream()) {
+                Files.copy(in, dockerfile);
+            }
+
+            String imageId = dockerClient.buildImageCmd()
+                    .withDockerfile(dockerfile.toFile())
+                    .withBaseDirectory(tempDir.toFile())
+                    .withTags(Set.of(imageName))
+                    .withPull(true)
+                    .exec(new BuildImageResultCallback())
+                    .awaitImageId();
+
+            log.info("Built sandbox image '{}' ({})", imageName, imageId);
+        } catch (Exception e) {
+            log.error("Failed to build sandbox image '{}': {}. Submissions for this language "
+                    + "will fail until the image is available.", imageName, e.getMessage(), e);
+        } finally {
+            if (tempDir != null) {
+                try (var paths = Files.walk(tempDir)) {
+                    paths.sorted(java.util.Comparator.reverseOrder())
+                            .forEach(p -> p.toFile().delete());
+                } catch (IOException ignored) {
+                }
+            }
+        }
     }
 
     public ExecutionResult execute(JobCreatedEvent job) throws IOException {

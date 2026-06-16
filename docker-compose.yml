@@ -1,11 +1,110 @@
 services:
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    # --quiet suppresses the per-connection accepted/ended log lines that mongosh would flood the logs with
+    command: ["mongod", "--quiet"]
+    environment:
+      - MONGO_INITDB_DATABASE=code_execution_db
+    ports:
+      # 27018 on host to avoid clashing with local mongod on 27017; reachable on 27017 internally
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+      # seed runs once on first init (empty volume)
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     hostname: rabbitmq
     ports:
-      - "5672:5672" # port for spring boot services
-      - "15672:15672" # port for management web ui
+      - "5672:5672"   # AMQP for the spring services
+      - "15672:15672" # management web UI
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  api-server:
+    build:
+      context: .
+      dockerfile: api-server/Dockerfile
+    image: code-runner/api-server:latest
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/code_execution_db
+      - SPRING_DATA_MONGODB_DATABASE=code_execution_db
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    deploy:
+      replicas: 3
+
+  gateway-service:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    image: code-runner/gateway-service:latest
+    environment:
+      # routes /api/** directly to the api-server service (Docker DNS round-robins replicas)
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api-server
+
+  code-execution-service:
+    build:
+      context: .
+      dockerfile: code-execution-service/Dockerfile
+    image: code-runner/code-execution-service:latest
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/code_execution_db
+      - SPRING_DATA_MONGODB_DATABASE=code_execution_db
+    volumes:
+      # the service launches sandbox containers on the host daemon via this socket,
+      # and builds the python/js sandbox images here on startup if they are missing.
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # empty -> relative /api, proxied by nginx to the gateway.
+        VITE_API_BASE_URL: ""
+    image: code-runner/frontend:latest
+    ports:
+      - "5173:80"
+    depends_on:
+      - gateway-service
+
+volumes:
+  mongo-data:

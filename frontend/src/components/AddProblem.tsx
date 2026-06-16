@@ -1,6 +1,7 @@
 import { ArrowLeft, Moon, Plus, Sun, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../utils/config";
 
 type Difficulty = "EASY" | "MEDIUM" | "HARD";
 type ThemeMode = "light" | "dark";
@@ -121,7 +122,7 @@ export const AddProblem = () => {
 	const submitProblem = async () => {
 		const payload = buildPayload();
 		try {
-			const response = await fetch("http://localhost:8080/api/problems", {
+			const response = await fetch(`${API_BASE_URL}/api/problems`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(payload),

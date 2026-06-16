@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    loadbalancer:
+      enabled: false
+    gateway:
+      routes:
+        - id: api-server-route
+          uri: http://api-server:8080
+          predicates:
+            - Path=/api/**

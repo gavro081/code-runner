@@ -19,8 +19,8 @@ multiple backends + 2 databases + message broker).
 | #  | Weight | Requirement | Status |
 |----|--------|-------------|--------|
 | 1  | 10%    | App on a **public git repository** | ✅ already done — https://github.com/gavro081/code-runner |
-| 2  | 10%    | **Dockerize** the application | ⬜ not started |
-| 3  | 10%    | **Orchestrate** app + database with **Docker Compose** | ⬜ not started |
+| 2  | 10%    | **Dockerize** the application | ✅ done — multi-stage Dockerfiles for all services + frontend (nginx) |
+| 3  | 10%    | **Orchestrate** app + database with **Docker Compose** | ✅ done — full stack in `docker-compose.yml`, end-to-end submit verified |
 | 4  | 20%    | Choose a **CI platform** (GitHub Actions / GitLab CI / Jenkins…) and set up a pipeline: on `git push`, build the new Docker image version and push it to a **registry** (e.g. DockerHub). **Bonus:** add a CD stage that deploys to a real environment (server / cloud / Kubernetes / Argo CD). | ⬜ not started |
 | 5  | 10%    | Kubernetes **Deployment** for the app + needed **ConfigMaps/Secrets** | ⬜ not started |
 | 6  | 10%    | Kubernetes **Service** for the app | ⬜ not started |
@@ -175,7 +175,9 @@ Order chosen so each step unblocks the next. Each gets its own feature branch of
 - [x] Pursue the **CD bonus**: **YES** — pipeline ends by deploying to the cluster.
 
 ### Still open
-- [ ] Frontend API URL strategy: **relative `/api` behind Ingress** (current lean) vs build-time env var.
+- [x] Frontend API URL strategy: **relative `/api`** (resolved). Frontend calls `${API_BASE_URL}/api/...`
+  where `API_BASE_URL` defaults to `""` (relative). In Compose, nginx proxies `/api` → gateway; in dev,
+  the Vite proxy does the same. Build-time `VITE_API_BASE_URL` arg remains available as an override.
 - [x] Standard **JDK version**: **17** across all poms (synced 2026-06-16).
 - [ ] CD mechanism for the bonus: plain `kubectl apply` from Actions vs **Argo CD** (GitOps). Decide at pt 4.
 
@@ -214,6 +216,36 @@ Append dated entries as work happens so a future session sees exactly where thin
     after deleting source files (matters for the Docker build stage too).
 - **2026-06-16** — Synced **`java.version` to 17** across all five poms (only the root pom was still on 21; modules
   already overrode to 17). Reactor + exec-service rebuild clean. Locks in a Java 17 base image for all Docker builds.
+- **2026-06-16** — **Dockerize + Compose (pts 2 & 3)** on branch `feat/dockerization`. Built and verified the full
+  stack end-to-end (Python *and* JavaScript submissions return `PASSED ALL TEST CASES`). Details:
+  - **Multi-stage Dockerfiles** (`maven:3.9-eclipse-temurin-17` build → `eclipse-temurin:17-jre-jammy` runtime;
+    **not** `-jre-alpine` — that tag has no arm64 manifest, build failed on Apple Silicon). `api-server` &
+    `code-execution-service` build from the **repo root context** (they need the `common` module + root parent pom):
+    each Dockerfile installs `common` to the local repo first, then packages the service. `gateway-service` &
+    `frontend` build from their own dirs. `.dockerignore` at root + per service.
+  - **Code execution kept working inside a container**: `code-execution-service` mounts `/var/run/docker.sock` and
+    runs as root, so its docker-java client talks to the **host daemon** and launches sandbox containers as siblings
+    (network none, autoremove, capped — unchanged). Runtime image needs **no docker CLI** (SDK uses the JDK's native
+    unix-socket support).
+  - **Auto-build of sandbox images**: added `ensureSandboxImages()` in `CodeExecutionService.init()` — on startup it
+    `inspectImage`s `python-coderunner-image` / `javascript-coderunner-image` and, if missing, **builds them via
+    docker-java** (`buildImageCmd` + `withPull(true)`) from the `classpath:docker/Dockerfile.*` resources. This
+    removes the manual `docker build` step entirely; verified both images get created on the host daemon at startup.
+  - **Gateway discovery**: new `application-docker.yml` (profile `docker`, set in Compose) drops the static
+    `localhost:8081-8083` list and routes `/api/**` directly to `http://api-server:8080`; Compose runs `api-server`
+    with `deploy.replicas: 3` and Docker DNS round-robins. Per-instance reply queues still work (status polls that
+    hit a different replica fall back to Mongo).
+  - **Frontend**: nginx image serving the Vite prod build; hardcoded `http://localhost:8080` replaced with
+    `${API_BASE_URL}/api/...` (`frontend/src/utils/config.ts`, default `""`). nginx proxies `/api` → gateway; Vite
+    dev proxy added so `npm run dev` still works with the same relative paths.
+  - **MongoDB**: now a container with a named volume; `mongo-init/seed.js` (generated from
+    `commands/code_execution_db.problems.json`) seeds the 7 problems on first init via `docker-entrypoint-initdb.d`.
+    Host port mapped to **27018** to avoid clashing with a local `mongod` on 27017 (internal services use
+    `mongo:27017`).
+  - **Config externalized to env vars** in Compose (`SPRING_DATA_MONGODB_URI`, `SPRING_RABBITMQ_*`, `SERVER_PORT`),
+    overriding the packaged `application.properties`. No creds baked into images.
+  - **`start.sh` is now superseded** by `docker compose up` (it would both `compose up` the full stack and re-run the
+    services via Maven — don't use it anymore). Left in place for reference; safe to delete later.
 
 ---
 

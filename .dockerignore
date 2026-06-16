@@ -1,0 +1,11 @@
+# Keep Java build contexts (root context) lean.
+**/target
+frontend/node_modules
+frontend/dist
+.git
+.idea
+.venv
+about
+diagrams
+**/.DS_Store
+*.iml

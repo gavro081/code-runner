@@ -5,6 +5,7 @@ import { ArrowLeft, Loader2, Moon, Sun } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { useNavigate, useParams } from "react-router-dom";
+import { API_BASE_URL } from "../utils/config";
 import { languages, type ProblemView } from "../utils/consts";
 import { getDifficultyColor } from "../utils/helpers";
 import Tooltip from "./Tooltip";
@@ -59,7 +60,7 @@ export const CodeIde = () => {
 		setJobResult(null);
 		const fetchData = async () => {
 			try {
-				const url = `http://localhost:8080/api/problems/${problemId}`;
+				const url = `${API_BASE_URL}/api/problems/${problemId}`;
 				const response = await fetch(url);
 				const data: ProblemView = await response.json();
 				setProblem(data);
@@ -90,7 +91,7 @@ export const CodeIde = () => {
 	const getRandomProblem = async () => {
 		try {
 			const res = await fetch(
-				`http://localhost:8080/api/problems/random?id=${problemId}`,
+				`${API_BASE_URL}/api/problems/random?id=${problemId}`,
 			);
 			const newProblemId: String = await res.text();
 			console.log(newProblemId);
@@ -103,7 +104,7 @@ export const CodeIde = () => {
 			console.log("polling status...");
 			try {
 				const res = await fetch(
-					`http://localhost:8080/api/problems/status/${jobId}`,
+					`${API_BASE_URL}/api/problems/status/${jobId}`,
 				);
 				const jobResult: JobResult = await res.json();
 				if (
@@ -135,7 +136,7 @@ export const CodeIde = () => {
 		setJobResult(null);
 		try {
 			const response = await fetch(
-				"http://localhost:8080/api/problems/submit",
+				`${API_BASE_URL}/api/problems/submit`,
 				{
 					method: "POST",
 					headers: {

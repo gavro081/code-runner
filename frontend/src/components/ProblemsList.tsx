@@ -1,6 +1,7 @@
 import { Moon, Plus, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../utils/config";
 import type { Problem } from "../utils/consts";
 import { getDifficultyColor } from "../utils/helpers";
 
@@ -16,7 +17,7 @@ export const ProblemsList = () => {
 	useEffect(() => {
 		const fetchProblems = async () => {
 			try {
-				const response = await fetch("http://localhost:8080/api/problems");
+				const response = await fetch(`${API_BASE_URL}/api/problems`);
 				const data: Problem[] = await response.json();
 				setProblems(data);
 			} catch (error) {
