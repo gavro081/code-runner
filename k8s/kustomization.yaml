@@ -30,10 +30,10 @@ generatorOptions:
 # single source of truth for image versions. the Deployments reference images without a tag
 images:
   - name: gavro081/code-runner-api-server
-    newTag: "0.3.0"
+    newTag: "1.0.0"
   - name: gavro081/code-runner-gateway-service
-    newTag: "0.3.0"
+    newTag: "1.0.0"
   - name: gavro081/code-runner-code-execution-service
-    newTag: "0.3.0"
+    newTag: "1.0.0"
   - name: gavro081/code-runner-frontend
-    newTag: "0.3.0"
+    newTag: "1.0.0"
