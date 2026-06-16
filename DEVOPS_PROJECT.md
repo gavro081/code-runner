@@ -92,9 +92,9 @@ The execution service auto-scales RabbitMQ consumers (4→10 threads) and pauses
 | **MongoDB** | external (local install today) | image (planned) | 27017 | — | **The single database.** DB `code_execution_db`, holds `problems` + `jobs` collections. Problems seeded via `commands/seed-db.sh` (`mongoimport`); jobs created at runtime. |
 
 ### Maven module layout (important quirk)
-- Root `pom.xml` (`packaging=pom`, parent spring-boot 3.5.6, `java.version=21`) declares only **`api-server`** and **`common`** as modules.
+- Root `pom.xml` (`packaging=pom`, parent spring-boot 3.5.6, `java.version=17`) declares only **`api-server`** and **`common`** as modules.
 - **`gateway-service`** and **`code-execution-service`** are **standalone** Maven projects with their *own* Spring Boot parent (3.4.1 and inherited respectively) — they are NOT reactor modules. Each has its own `mvnw`.
-- Module poms override `java.version` back to **17**. Local toolchain is **Java 17** + Maven 3.9.11. (`docker-attempt` experimented with Temurin 23 images.) → **Pick one Java version for all Docker images.**
+- **All five poms now target `java.version=17`** (synced 2026-06-16). Local toolchain is **Java 17** + Maven 3.9.11 → use a Java 17 base image for all Docker builds.
 - `code-execution-service` depends on `common:0.0.1-SNAPSHOT` from the local Maven repo, so `common` must be `mvn install`ed first. Same for `api-server`.
 
 ### Config files
@@ -143,7 +143,7 @@ These are the things that will actually take thought during dockerization / k8s.
 - Maps cleanly onto the rubric: **one StatefulSet for MongoDB** (with a PVC) satisfies pt 8. RabbitMQ can be a separate StatefulSet or a plain Deployment. (No more Postgres StatefulSet to worry about — this is the payoff of the consolidation.)
 
 ### 5.5 Java version & image base
-- Standardize on one JDK (17 is what builds locally; root pom says 21). Choose a base image (`eclipse-temurin:17-jdk` / `-jre-alpine`) and use **multi-stage builds** (Maven build stage → slim JRE runtime) so we don't depend on a pre-built `target/*.jar` like the `docker-attempt` Dockerfiles did.
+- ✅ JDK standardized on **17** across all five poms (done 2026-06-16). Use a Java 17 base image (`eclipse-temurin:17-jdk` for the build stage, `-jre-alpine` for runtime) with **multi-stage builds** (Maven build stage → slim JRE runtime) so we don't depend on a pre-built `target/*.jar` like the `docker-attempt` Dockerfiles did.
 - Remember the standalone-module quirk: build `common` first (install to local repo), or restructure so all four are reactor modules / build each independently in its own Dockerfile.
 
 ### 5.6 Secrets
@@ -186,7 +186,7 @@ Order chosen so each step unblocks the next. Each gets its own feature branch of
 
 ### Still open
 - [ ] Frontend API URL strategy: **relative `/api` behind Ingress** (current lean) vs build-time env var.
-- [ ] Standard **JDK version** for images (17 vs 21) — 17 builds locally.
+- [x] Standard **JDK version**: **17** across all poms (synced 2026-06-16).
 - [ ] CD mechanism for the bonus: plain `kubectl apply` from Actions vs **Argo CD** (GitOps). Decide at pt 4.
 
 ---
@@ -218,6 +218,12 @@ Append dated entries as work happens so a future session sees exactly where thin
   `AutoConfiguration.imports`; removed `spring-boot-starter-data-jpa` + `postgresql` from the 3 poms; stripped
   `spring.jpa.*`/`spring.datasource.*` from both services' properties. Reactor + exec-service both build clean;
   zero residual JPA/Postgres references. Next up: pt 2 (dockerize) on a fresh feature branch off `dev`.
+  - *Gotcha hit & fixed:* the first `mvn install` (no `clean`) left a stale compiled `AutoConfiguration.imports` in
+    `common/target` → it got packaged into the `.m2` `common` jar and broke `start.sh` with
+    `Unable to read meta-data for ... CommonJpaAutoConfiguration`. Fix: `mvn clean install`. Lesson: always `clean`
+    after deleting source files (matters for the Docker build stage too).
+- **2026-06-16** — Synced **`java.version` to 17** across all five poms (only the root pom was still on 21; modules
+  already overrode to 17). Reactor + exec-service rebuild clean. Locks in a Java 17 base image for all Docker builds.
 
 ---
 
