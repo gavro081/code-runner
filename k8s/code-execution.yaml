@@ -1,0 +1,52 @@
+# no host Docker socket in k8s, so a privileged `docker:dind` sidecar
+# provides the daemon; the exec service talks to it via DOCKER_HOST=tcp://localhost:2375
+# and builds/runs sandbox containers inside dind. no Service becuase it's a RabbitMQ consumer
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-execution-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-execution-service
+  template:
+    metadata:
+      labels:
+        app: code-execution-service
+    spec:
+      initContainers:
+        # native sidecar (restartPolicy: Always) -> starts and becomes Ready BEFORE the
+        # main container, so the exec service's one-shot ensureSandboxImages() finds a
+        # live daemon (it does not retry on failure).
+        - name: dind
+          image: docker:27-dind
+          restartPolicy: Always
+          securityContext:
+            privileged: true
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: ""          # disable TLS -> daemon listens on tcp://0.0.0.0:2375
+          readinessProbe:
+            tcpSocket:
+              port: 2375
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          volumeMounts:
+            - name: dind-storage
+              mountPath: /var/lib/docker
+      containers:
+        - name: code-execution-service
+          image: gavro081/code-runner-code-execution-service   # tag set centrally in kustomization.yaml
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DOCKER_HOST
+              value: tcp://localhost:2375
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secret
+      volumes:
+        - name: dind-storage
+          emptyDir: {}

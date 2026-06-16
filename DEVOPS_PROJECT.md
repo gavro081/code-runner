@@ -22,11 +22,11 @@ multiple backends + 2 databases + message broker).
 | 2  | 10%    | **Dockerize** the application | ✅ done — multi-stage Dockerfiles for all services + frontend (nginx) |
 | 3  | 10%    | **Orchestrate** app + database with **Docker Compose** | ✅ done — full stack in `docker-compose.yml`, end-to-end submit verified |
 | 4  | 20%    | Choose a **CI platform** (GitHub Actions / GitLab CI / Jenkins…) and set up a pipeline: on `git push`, build the new Docker image version and push it to a **registry** (e.g. DockerHub). **Bonus:** add a CD stage that deploys to a real environment (server / cloud / Kubernetes / Argo CD). | 🟨 CI done (`.github/workflows/ci.yml` → DockerHub); CD (Argo CD) bonus pending |
-| 5  | 10%    | Kubernetes **Deployment** for the app + needed **ConfigMaps/Secrets** | ⬜ not started |
-| 6  | 10%    | Kubernetes **Service** for the app | ⬜ not started |
-| 7  | 10%    | Kubernetes **Ingress** for the app | ⬜ not started |
-| 8  | 10%    | Kubernetes **StatefulSet** for the database (now a single **MongoDB**) + needed ConfigMaps/Secrets | ⬜ not started |
-| 9  | 10%    | Put all manifests in a **separate namespace** on a cluster and **demonstrate it works** | ⬜ not started |
+| 5  | 10%    | Kubernetes **Deployment** for the app + needed **ConfigMaps/Secrets** | ✅ done — Deployments for all 5 services + `app-config` ConfigMap + `app-secret` Secret (`k8s/`) |
+| 6  | 10%    | Kubernetes **Service** for the app | ✅ done — ClusterIP Services; `api-server` Service load-balances 3 replicas |
+| 7  | 10%    | Kubernetes **Ingress** for the app | ✅ done — Traefik Ingress (`code-runner.localhost`): `/api`→gateway, `/`→frontend |
+| 8  | 10%    | Kubernetes **StatefulSet** for the database (now a single **MongoDB**) + needed ConfigMaps/Secrets | ✅ done — MongoDB StatefulSet + PVC + headless Service + seed ConfigMap + Secret |
+| 9  | 10%    | Put all manifests in a **separate namespace** on a cluster and **demonstrate it works** | ✅ done — namespace `code-runner` on k3d; Python + JS submissions PASSED end-to-end |
 
 **Goal: complete every subtask for full marks, including the CD bonus if feasible.**
 
@@ -170,7 +170,7 @@ Order chosen so each step unblocks the next. Each gets its own feature branch of
 ### Decisions (locked 2026-06-16)
 - [x] CI registry: **DockerHub** (matches the task's example; needs account + access token in repo secrets).
 - [x] CI platform: **GitHub Actions** (repo is on GitHub).
-- [x] Local cluster: **minikube** (built-in ingress addon; needs install — not present yet).
+- [x] Local cluster: **k3d** (changed from minikube — already installed, used in labs; bundles Traefik Ingress + local-path PVC provisioner). Privileged DinD sidecar validated to run nested inside a k3d node.
 - [x] Exec-service sandbox in k8s: **DinD sidecar** (`docker:dind`, privileged) — minimal app code change.
 - [x] Pursue the **CD bonus**: **YES** — pipeline ends by deploying to the cluster.
 
@@ -179,7 +179,8 @@ Order chosen so each step unblocks the next. Each gets its own feature branch of
   where `API_BASE_URL` defaults to `""` (relative). In Compose, nginx proxies `/api` → gateway; in dev,
   the Vite proxy does the same. Build-time `VITE_API_BASE_URL` arg remains available as an override.
 - [x] Standard **JDK version**: **17** across all poms (synced 2026-06-16).
-- [ ] CD mechanism for the bonus: plain `kubectl apply` from Actions vs **Argo CD** (GitOps). Decide at pt 4.
+- [ ] CD mechanism for the bonus: **Argo CD** (GitOps) — manifests in `k8s/` are kustomize-ready for it; the
+  `images:` block is the single tag source an Argo CD Image Updater / CI bump step can write to. **Next task.**
 
 ---
 
@@ -268,6 +269,27 @@ Append dated entries as work happens so a future session sees exactly where thin
     Read & Write access token). Not committed; the workflow reads them via `docker/login-action`.
   - **CD bonus (Argo CD) NOT yet built** — workflow is structured so a deploy / manifest-bump job slots on
     later without restructuring. See **Still open**.
+- **2026-06-16** — **Kubernetes manifests (pts 5–9)** on branch `feature/k8s-manifests`, released as `v0.3.0`
+  (milestone 3). Full stack runs on a local **k3d** cluster; Python *and* JavaScript submissions return
+  `PASSED ALL TEST CASES` end-to-end through the Ingress. Details:
+  - **`k8s/` manifest set** applied via `kubectl apply -k k8s/` (kustomize). Objects: Namespace `code-runner`;
+    `app-config` ConfigMap + `app-secret` Secret (real Mongo + RabbitMQ auth); **MongoDB StatefulSet** (PVC via
+    `volumeClaimTemplate`, headless Service, seeded once from a `mongo-seed` ConfigMap generated from
+    `k8s/seed.js`); RabbitMQ Deployment + Service; `api-server` Deployment (**3 replicas**) + Service (the
+    Service is the load balancer — replaces Docker DNS round-robin); gateway Deployment + Service
+    (`SPRING_PROFILES_ACTIVE=docker`); frontend Deployment + Service; Traefik **Ingress** (`/api`→gateway,
+    `/`→frontend). No app code changed.
+  - **DinD (the hard part) works in-cluster:** `code-execution-service` runs a privileged `docker:dind`
+    **native sidecar** (initContainer + `restartPolicy: Always`, readiness on 2375) and talks to it via
+    `DOCKER_HOST=tcp://localhost:2375`. On startup it built both sandbox images against that daemon. The
+    privileged-DinD-nested-in-k3d risk was de-risked first with a throwaway pod.
+  - **Multi-arch images (the gotcha):** CI runs on amd64 but k3d on Apple Silicon is arm64 → the original
+    amd64-only `0.2.0` images hit `ImagePullBackOff`. Fixed by making CI **multi-arch** (QEMU +
+    `platforms: linux/amd64,linux/arm64`); released `v0.2.1` (multi-arch) then `v0.3.0`.
+  - **Image versions centralized:** Deployments reference untagged image names; the tag lives once in the
+    kustomization `images:` block (`kustomize edit set image …` to bump). CI now also `paths-ignore`s `k8s/**`
+    so manifest-only changes don't rebuild images.
+  - **Access:** `http://code-runner.localhost/` (macOS auto-resolves `*.localhost`; k3d maps host :80 → Traefik).
 
 ---
 

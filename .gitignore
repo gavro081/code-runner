@@ -2,6 +2,6 @@
 about/
 .venv/
 **/__pycache__
-# code_execution_db.problems.json
 **/application.properties
 **/code-executor.excalidraw
+k8s/secret.yaml

@@ -1,0 +1,10 @@
+# credentials live in the Secret
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  SPRING_DATA_MONGODB_DATABASE: code_execution_db
+  SPRING_RABBITMQ_HOST: rabbitmq
+  SPRING_RABBITMQ_PORT: "5672"
+  SERVER_PORT: "8080"
