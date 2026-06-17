@@ -1,5 +1,5 @@
 import { ArrowLeft, Moon, Plus, Sun, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../utils/config";
 
@@ -55,6 +55,10 @@ export const AddProblem = () => {
 	const [showPreview, setShowPreview] = useState(false);
 
 	const generatedId = slugify(title);
+
+	useEffect(() => {
+		document.body.style.backgroundColor = isDark ? "#111827" : "#ffffff";
+	}, [isDark]);
 
 	//  helpers for dynamic string lists
 	const updateListItem = (
@@ -151,7 +155,7 @@ export const AddProblem = () => {
 					<div className="flex items-center gap-3">
 						<button
 							onClick={() => navigate("/")}
-							className={`flex items-center gap-1 text-sm transition-colors ${
+							className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
 								isDark
 									? "text-gray-400 hover:text-white"
 									: "text-gray-500 hover:text-gray-900"
@@ -333,7 +337,7 @@ export const AddProblem = () => {
 						</div>
 					))}
 					<button
-						className={`flex items-center gap-1 text-sm mt-2 px-3 py-1.5 rounded-lg transition-colors ${
+						className={`flex items-center gap-1 text-sm mt-2 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
 							isDark
 								? "text-blue-400 hover:bg-gray-700"
 								: "text-blue-600 hover:bg-blue-50"
@@ -373,7 +377,7 @@ export const AddProblem = () => {
 							/>
 							{constraints.length > 1 && (
 								<button
-									className={`p-1.5 rounded transition-colors ${
+									className={`p-1.5 rounded transition-colors cursor-pointer ${
 										isDark
 											? "text-gray-400 hover:text-red-400 hover:bg-gray-700"
 											: "text-gray-400 hover:text-red-500 hover:bg-gray-200"
@@ -386,7 +390,7 @@ export const AddProblem = () => {
 						</div>
 					))}
 					<button
-						className={`flex items-center gap-1 text-sm mt-2 px-3 py-1.5 rounded-lg transition-colors ${
+						className={`flex items-center gap-1 text-sm mt-2 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
 							isDark
 								? "text-blue-400 hover:bg-gray-700"
 								: "text-blue-600 hover:bg-blue-50"
@@ -506,7 +510,7 @@ export const AddProblem = () => {
 						</div>
 					))}
 					<button
-						className={`flex items-center gap-1 text-sm mt-2 px-3 py-1.5 rounded-lg transition-colors ${
+						className={`flex items-center gap-1 text-sm mt-2 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
 							isDark
 								? "text-blue-400 hover:bg-gray-700"
 								: "text-blue-600 hover:bg-blue-50"
@@ -624,7 +628,7 @@ export const AddProblem = () => {
 						</div>
 					))}
 					<button
-						className={`flex items-center gap-1 text-sm mt-2 px-3 py-1.5 rounded-lg transition-colors ${
+						className={`flex items-center gap-1 text-sm mt-2 px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
 							isDark
 								? "text-blue-400 hover:bg-gray-700"
 								: "text-blue-600 hover:bg-blue-50"
@@ -696,7 +700,7 @@ export const AddProblem = () => {
 				<div className="flex gap-3 mb-6">
 					<button
 						onClick={() => setShowPreview(!showPreview)}
-						className={`flex-1 py-2.5 rounded-lg font-medium transition-colors border ${
+						className={`flex-1 py-2.5 rounded-lg font-medium transition-colors border cursor-pointer ${
 							isDark
 								? "border-gray-600 text-gray-300 hover:bg-gray-800"
 								: "border-gray-300 text-gray-700 hover:bg-gray-100"
@@ -705,7 +709,7 @@ export const AddProblem = () => {
 						{showPreview ? "Hide" : "Show"} JSON Preview
 					</button>
 					<button
-						className="flex-1 py-2.5 rounded-lg font-medium bg-green-600 hover:bg-green-700 text-white transition-colors"
+						className="flex-1 py-2.5 rounded-lg font-medium bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer"
 						onClick={submitProblem}
 					>
 						Submit Problem

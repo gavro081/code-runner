@@ -15,6 +15,10 @@ export const ProblemsList = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		document.body.style.backgroundColor = isDark ? "#111827" : "#ffffff";
+	}, [isDark]);
+
+	useEffect(() => {
 		const fetchProblems = async () => {
 			try {
 				const response = await fetch(`${API_BASE_URL}/api/problems`);

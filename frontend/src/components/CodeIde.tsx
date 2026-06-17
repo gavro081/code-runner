@@ -41,6 +41,10 @@ export const CodeIde = () => {
 		setEffectiveTheme(themeMode === "dark" ? tokyoNight : tokyoNightDay);
 	}, [themeMode]);
 
+	useEffect(() => {
+		document.body.style.backgroundColor = isDark ? "#111827" : "#ffffff";
+	}, [isDark]);
+
 	// useEffect(() => {
 	// 	let index = 0;
 	// 	const interval = setInterval(() => {
