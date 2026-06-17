@@ -33,13 +33,13 @@ generatorOptions:
 
 # single source of truth for image versions. the Deployments reference images without a tag
 # command for changing all at once:
-# sed -i '' 's/newTag: "1.0.0"/newTag: "1.1.0"/g' k8s/kustomization.yaml
+# sed -i '' 's/newTag: "1.0.0"/newTag: "1.2.0"/g' k8s/kustomization.yaml
 images:
   - name: gavro081/code-runner-api-server
-    newTag: "1.1.0"
+    newTag: "1.2.0"
   - name: gavro081/code-runner-gateway-service
-    newTag: "1.1.0"
+    newTag: "1.2.0"
   - name: gavro081/code-runner-code-execution-service
-    newTag: "1.1.0"
+    newTag: "1.2.0"
   - name: gavro081/code-runner-frontend
-    newTag: "1.1.0"
+    newTag: "1.2.0"
