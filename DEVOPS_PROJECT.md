@@ -25,7 +25,7 @@ multiple backends + 2 databases + message broker).
 | 5  | 10%    | Kubernetes **Deployment** for the app + needed **ConfigMaps/Secrets** | ✅ done — Deployments for all 5 services + `app-config` ConfigMap + `app-secret` Secret (`k8s/`) |
 | 6  | 10%    | Kubernetes **Service** for the app | ✅ done — ClusterIP Services; `api-server` Service load-balances 3 replicas |
 | 7  | 10%    | Kubernetes **Ingress** for the app | ✅ done — Traefik Ingress (`code-runner.localhost`): `/api`→gateway, `/`→frontend |
-| 8  | 10%    | Kubernetes **StatefulSet** for the database (now a single **MongoDB**) + needed ConfigMaps/Secrets | ✅ done — MongoDB StatefulSet + PVC + headless Service + seed ConfigMap + Secret |
+| 8  | 10%    | Kubernetes **StatefulSet** for the database (now a single **MongoDB**) + needed ConfigMaps/Secrets | ✅ done — **MongoDB 3-member replica set** via the Bitnami Helm chart (renders a StatefulSet + per-replica PVC + headless Service), inflated through kustomize `helmCharts`; seed ConfigMap + `app-secret` |
 | 9  | 10%    | Put all manifests in a **separate namespace** on a cluster and **demonstrate it works** | ✅ done — namespace `code-runner` on k3d; Python + JS submissions PASSED end-to-end |
 
 **Goal: complete every subtask for full marks, including the CD bonus if feasible.**
@@ -89,7 +89,7 @@ The execution service auto-scales RabbitMQ consumers (4→10 threads) and pauses
 | **code-execution-service** | Spring Boot + **docker-java** SDK | Maven, Java 17 | 8084 | RabbitMQ, Mongo, **Docker daemon** | ⚠️ The hard part: it launches containers via the Docker daemon (`DefaultDockerClientConfig` → `DOCKER_HOST`/socket). NOT a module of root pom. Mongo starter comes transitively via `common`. |
 | **common** | Shared DTOs / Mongo `@Document` models / events / RabbitMQ constants | Maven, Java 17 | — | — | Library, `spring-boot-maven-plugin` skipped. Module of root pom. |
 | **RabbitMQ** | `rabbitmq:3-management` | image | 5672 / 15672 | — | guest/guest. Already in `docker-compose.yml`. |
-| **MongoDB** | external (local install today) | image (planned) | 27017 | — | **The single database.** DB `code_execution_db`, holds `problems` + `jobs` collections. Problems seeded via `commands/seed-db.sh` (`mongoimport`); jobs created at runtime. |
+| **MongoDB** | external (local) / **Bitnami chart, 3-member replica set** (k8s) | image | 27017 | — | **The single database.** DB `code_execution_db`, holds `problems` + `jobs` collections. In k8s: HA replica set `rs0` (members `mongo-0/1/2.mongo-headless`); seeded once on the primary via the `mongo-seed` ConfigMap and replicated. Local dev seeds via `commands/seed-db.sh` (`mongoimport`). ⚠️ Bitnami free catalog freezes 2026-08-28. |
 
 ### Maven module layout (important quirk)
 - Root `pom.xml` (`packaging=pom`, parent spring-boot 3.5.6, `java.version=17`) declares only **`api-server`** and **`common`** as modules.

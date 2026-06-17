@@ -35,7 +35,8 @@ Traced from the current code/config so the manifests match real behavior:
 | `mongo-init` bind mount for seeding | **ConfigMap** mounted at `/docker-entrypoint-initdb.d` | replaced |
 | Compose env vars | **ConfigMap** (non-secret) + **Secret** (credentials) | replaced |
 | `depends_on` + healthchecks | readiness/liveness **probes** (services also just retry) | replaced |
-| named volume `mongo-data` | **PVC** via StatefulSet `volumeClaimTemplate` | replaced |
+| named volume `mongo-data` | **PVC** per replica via the chart's StatefulSet `volumeClaimTemplate` | replaced |
+| single Mongo instance | **3-member MongoDB replica set** (Bitnami chart, HA) | upgraded |
 
 ### Is the gateway still needed?
 
@@ -51,6 +52,9 @@ architecture and its CORS handling; the risk/effort of removing it isn't worth i
   **local-path PVC** provisioner. Supersedes the earlier minikube note in `DEVOPS_PROJECT.md`.
 - **Keep the gateway** as Deployment + Service.
 - **Real auth** on Mongo + RabbitMQ; credentials in **Secrets**, non-secret config in a **ConfigMap**.
+- **MongoDB = Bitnami Helm chart, 3-member replica set** (HA). The chart renders the StatefulSet that
+  satisfies pt 8; inflated through kustomize `helmCharts` so the single Argo CD Application stays unchanged.
+  Upstream risk noted: Bitnami's free catalog is deprecated and its images freeze on **2026-08-28**.
 - **RabbitMQ = Deployment** (not StatefulSet — pt 8's StatefulSet requirement is met by MongoDB).
 - **Images** pulled from DockerHub at tag **`0.2.0`** (public; `imagePullPolicy: IfNotPresent`).
 - **No app code changes**; no new images.
@@ -84,14 +88,14 @@ and is the future Argo CD entrypoint.
 | `namespace.yaml` | Namespace `code-runner` | pt 9 |
 | `config.yaml` | ConfigMap `app-config` | non-secret env (§5) |
 | `secret.example.yaml` | Secret `app-secret` (template) | committed; real `secret.yaml` **gitignored** (mirrors the `application.properties` pattern) |
-| `mongo.yaml` | **StatefulSet** `mongo` + headless Service + `volumeClaimTemplate` (PVC) | pt 8; seeded via ConfigMap at `/docker-entrypoint-initdb.d` |
+| `mongodb-values.yaml` | **Bitnami MongoDB chart** (`architecture: replicaset`, `replicaCount: 3`), inflated by kustomize `helmCharts` | pt 8 (chart renders a **StatefulSet** + headless Service + per-replica PVC); seeded via `initdbScriptsConfigMap: mongo-seed` |
 | `rabbitmq.yaml` | Deployment + Service (5672; optional 15672) | creds from Secret |
 | `api-server.yaml` | Deployment **replicas: 3** + Service `api-server:8080` | the Service **is** the load balancer (pt 6) |
 | `gateway.yaml` | Deployment + Service `gateway-service:8080` | env `SPRING_PROFILES_ACTIVE=docker` |
 | `code-execution.yaml` | Deployment: exec container **+ DinD native sidecar** | the hard part (§6); no Service (RabbitMQ consumer) |
 | `frontend.yaml` | Deployment + Service `frontend:80` | |
 | `ingress.yaml` | Ingress (Traefik), host `code-runner.localhost` | pt 7 |
-| `kustomization.yaml` | `namespace: code-runner`; `configMapGenerator` for the Mongo seed from `mongo-init/seed.js` | apply entrypoint |
+| `kustomization.yaml` | `namespace: code-runner`; `helmCharts` (Bitnami MongoDB); `configMapGenerator` for the Mongo seed from `mongo-init/seed.js` | apply entrypoint (needs `--enable-helm`) |
 
 ---
 
@@ -102,21 +106,32 @@ and is the future Argo CD entrypoint.
 `SPRING_RABBITMQ_PORT=5672`, `SERVER_PORT=8080`.
 
 **Secret `app-secret`** (real credentials):
-- `SPRING_DATA_MONGODB_URI=mongodb://<user>:<pass>@mongo:27017/code_execution_db?authSource=admin`
+- `SPRING_DATA_MONGODB_URI=mongodb://root:<pass>@mongo-0.mongo-headless:27017,mongo-1.mongo-headless:27017,mongo-2.mongo-headless:27017/code_execution_db?replicaSet=rs0&authSource=admin`
+  — lists all three replica-set members; root user is fixed to `root`.
 - `SPRING_RABBITMQ_USERNAME`, `SPRING_RABBITMQ_PASSWORD`
-- infra-pod keys: `MONGO_INITDB_ROOT_USERNAME/PASSWORD`, `RABBITMQ_DEFAULT_USER/PASS`
+- Bitnami-chart keys (names dictated by the chart, read via `auth.existingSecret: app-secret`):
+  `mongodb-root-password`, `mongodb-replica-set-key` (shared keyfile for inter-member auth, required for replicaset)
+- RabbitMQ pod keys: `RABBITMQ_DEFAULT_USER/PASS`
 
 Spring apps (api-server, gateway, exec) consume via `envFrom: [configMapRef: app-config, secretRef: app-secret]`.
-The mongo and rabbitmq pods map **only their own keys** via `valueFrom.secretKeyRef` (so broker/DB pods don't
-inherit the Spring URIs). Real `secret.yaml` is gitignored; `secret.example.yaml` is committed with placeholder
-values.
+The RabbitMQ pod maps **only its own keys** via `valueFrom.secretKeyRef`; the MongoDB chart pulls its keys from
+the same Secret via `auth.existingSecret`. Real `secret.yaml` is gitignored; `secret.example.yaml` is committed
+with placeholder values.
 
 ### MongoDB seeding + auth
-- `mongo` StatefulSet sets `MONGO_INITDB_ROOT_USERNAME/PASSWORD` → root user in the `admin` db (hence
-  `authSource=admin` in the URI).
+- The chart's `auth.rootUser: root` + `mongodb-root-password` create the root user in the `admin` db (hence
+  `authSource=admin` in the URI). `mongodb-replica-set-key` is the shared keyfile members use to authenticate
+  to each other.
 - The seed ConfigMap is generated from the existing `mongo-init/seed.js` (kustomize `configMapGenerator`) and
-  mounted at `/docker-entrypoint-initdb.d`; it runs once on first init (empty PVC), authenticated as root —
-  same mechanism as Compose, just sourced from a ConfigMap instead of a bind mount.
+  wired into the chart via `initdbScriptsConfigMap: mongo-seed`; it runs once on first init of the **primary**
+  (empty PVC) and the writes replicate to the secondaries — same seed.js as Compose, just sourced from a
+  ConfigMap and run on the primary.
+
+### Helm-in-kustomize requirement
+`kustomization.yaml` inflates the Bitnami chart via `helmCharts`, which kustomize only permits with
+`--enable-helm`. Argo CD gets this from `kustomize.buildOptions: --enable-helm` in the `argocd-cm` ConfigMap
+(set by `bootstrap.sh`, with a repo-server restart). Locally, render with
+`kustomize build --enable-helm k8s/ | kubectl apply -f -` — plain `kubectl apply -k` cannot enable Helm.
 
 ---
 

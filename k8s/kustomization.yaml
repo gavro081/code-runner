@@ -6,7 +6,6 @@ namespace: code-runner
 resources:
   - namespace.yaml
   - config.yaml
-  - mongo.yaml
   - rabbitmq.yaml
   - api-server.yaml
   - gateway.yaml
@@ -14,15 +13,24 @@ resources:
   - frontend.yaml
   - ingress.yaml
 
+helmCharts:
+  - name: mongodb
+    repo: oci://registry-1.docker.io/bitnamicharts
+    version: 19.1.10  
+    releaseName: mongo
+    namespace: code-runner
+    valuesFile: mongodb-values.yaml
+
 # mongo seed ConfigMap, generated from k8s/seed.js (a copy of mongo-init/seed.js — kustomize
-# cannot reference files outside this directory). mounted at /docker-entrypoint-initdb.d.
+# cannot reference files outside this directory). The chart mounts it at
+# /docker-entrypoint-initdb.d on the primary via initdbScriptsConfigMap: mongo-seed.
 configMapGenerator:
   - name: mongo-seed
     files:
       - seed.js
 
 generatorOptions:
-  disableNameSuffixHash: true   # keep the name 'mongo-seed' stable (referenced by mongo.yaml)
+  disableNameSuffixHash: true   # keep the name 'mongo-seed' stable (referenced by the chart values)
 
 # single source of truth for image versions. the Deployments reference images without a tag
 images:

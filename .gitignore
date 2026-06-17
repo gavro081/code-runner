@@ -5,3 +5,4 @@ about/
 **/application.properties
 **/code-executor.excalidraw
 k8s/secret.yaml
+k8s/charts/

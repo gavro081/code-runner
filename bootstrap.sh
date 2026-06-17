@@ -30,7 +30,7 @@ if [ ! -f "$HERE/k8s/secret.yaml" ]; then
   echo "!! Fill in real credentials in k8s/secret.yaml, then re-run ./bootstrap.sh"
   exit 1
 fi
-if grep -q "<MONGO_USER>" "$HERE/k8s/secret.yaml"; then
+if grep -qE "<MONGO_PASS>|<RABBIT_PASS>|<REPLICA_SET_KEY>" "$HERE/k8s/secret.yaml"; then
   echo "!! k8s/secret.yaml still has placeholder values — fill in real credentials and re-run."
   exit 1
 fi
@@ -47,6 +47,14 @@ echo "==> 3/6  install Argo CD (server-side apply for the large CRDs)"
 kubectl create namespace "$ARGO_NS" --dry-run=client -o yaml | kubectl apply -f -
 kubectl apply -n "$ARGO_NS" --server-side --force-conflicts \
   -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml >/dev/null
+
+echo "==> 3.5  enable Helm support in Argo CD's kustomize build (Bitnami MongoDB chart)"
+# k8s/kustomization.yaml inflates the Bitnami chart via `helmCharts`, which kustomize only
+# allows with --enable-helm. Argo CD reads this from the argocd-cm ConfigMap; restart the
+# repo-server so it picks up the change (the rollout wait below covers the restart).
+kubectl -n "$ARGO_NS" patch configmap argocd-cm --type merge \
+  -p '{"data":{"kustomize.buildOptions":"--enable-helm"}}'
+kubectl -n "$ARGO_NS" rollout restart deploy/argocd-repo-server
 
 echo "==> 4/6  wait for Argo CD to be ready"
 kubectl -n "$ARGO_NS" rollout status deploy/argocd-repo-server --timeout=300s
