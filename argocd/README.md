@@ -1,4 +1,4 @@
-# Argo CD (CD bonus)
+# Argo CD
 
 GitOps continuous deployment for Code Runner. Argo CD watches the `dev` branch and keeps the
 `code-runner` namespace in sync with the manifests under [`../k8s`](../k8s).
@@ -10,8 +10,8 @@ GitOps continuous deployment for Code Runner. Argo CD watches the `dev` branch a
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --server-side
 
-# 2. bootstrap the app secret (gitignored — not GitOps-managed; see k8s/kustomization.yaml)
-kubectl apply -n code-runner -f ../k8s/secret.yaml     # copy from k8s/secret.example.yaml first
+# 2. bootstrap the app secret (gitignored - not GitOps-managed; see k8s/kustomization.yaml)
+kubectl apply -n code-runner -f ../k8s/secret.yaml # copy from k8s/secret.example.yaml first
 
 # 3. register the Application
 kubectl apply -f application.yaml
@@ -32,5 +32,5 @@ kubectl -n argocd port-forward svc/argocd-server 8081:443
 ## Status from the CLI
 
 ```bash
-kubectl -n argocd get application code-runner          # SYNC STATUS / HEALTH
+kubectl -n argocd get application code-runner # SYNC STATUS / HEALTH
 ```
