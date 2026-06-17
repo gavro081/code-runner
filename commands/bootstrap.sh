@@ -11,7 +11,8 @@
 #   5. register the Argo CD Application -> Argo deploys the app from the `dev` branch (k8s/)
 #   6. wait for the app to be Synced + Healthy, then print access info
 #
-# Prereqs: k3d, kubectl, docker, internet. Run from the repo root: ./bootstrap.sh
+# Prereqs: k3d, kubectl, docker, internet. Run from anywhere: ./commands/bootstrap.sh
+#          (paths are resolved relative to the script, not the current directory)
 #
 # NOTE: Argo deploys whatever is on the `dev` branch on GitHub (true GitOps) — not your local
 # working tree. Commit/push manifest changes to `dev` for them to take effect.
@@ -21,16 +22,17 @@ set -euo pipefail
 CLUSTER="code-runner"
 NS="code-runner"
 ARGO_NS="argocd"
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# this script lives in commands/; the manifests live at the repo root one level up
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # preflight: the bootstrap secret must exist and have real creds
-if [ ! -f "$HERE/k8s/secret.yaml" ]; then
+if [ ! -f "$ROOT/k8s/secret.yaml" ]; then
   echo "!! k8s/secret.yaml not found — creating it from the template."
-  cp "$HERE/k8s/secret.example.yaml" "$HERE/k8s/secret.yaml"
-  echo "!! Fill in real credentials in k8s/secret.yaml, then re-run ./bootstrap.sh"
+  cp "$ROOT/k8s/secret.example.yaml" "$ROOT/k8s/secret.yaml"
+  echo "!! Fill in real credentials in k8s/secret.yaml, then re-run ./commands/bootstrap.sh"
   exit 1
 fi
-if grep -qE "<MONGO_PASS>|<RABBIT_PASS>|<REPLICA_SET_KEY>" "$HERE/k8s/secret.yaml"; then
+if grep -qE "<MONGO_PASS>|<RABBIT_PASS>|<REPLICA_SET_KEY>" "$ROOT/k8s/secret.yaml"; then
   echo "!! k8s/secret.yaml still has placeholder values — fill in real credentials and re-run."
   exit 1
 fi
@@ -41,7 +43,7 @@ k3d cluster create "$CLUSTER" -p "80:80@loadbalancer" -p "443:443@loadbalancer" 
 
 echo "==> 2/6  namespace + bootstrap secret (out-of-band; Argo does not manage it)"
 kubectl create namespace "$NS" --dry-run=client -o yaml | kubectl apply -f -
-kubectl apply -n "$NS" -f "$HERE/k8s/secret.yaml"
+kubectl apply -n "$NS" -f "$ROOT/k8s/secret.yaml"
 
 echo "==> 3/6  install Argo CD (server-side apply for the large CRDs)"
 kubectl create namespace "$ARGO_NS" --dry-run=client -o yaml | kubectl apply -f -
@@ -62,7 +64,7 @@ kubectl -n "$ARGO_NS" rollout status deploy/argocd-server      --timeout=300s
 kubectl -n "$ARGO_NS" rollout status statefulset/argocd-application-controller --timeout=300s
 
 echo "==> 5/6  register the Argo CD Application (GitOps deploys the app from dev)"
-kubectl apply -f "$HERE/argocd/application.yaml"
+kubectl apply -f "$ROOT/argocd/application.yaml"
 
 echo "==> 6/6  wait for the app to sync (Argo pulls k8s/ from the dev branch)"
 for i in $(seq 1 50); do
