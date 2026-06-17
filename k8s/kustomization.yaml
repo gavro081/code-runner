@@ -6,9 +6,6 @@ namespace: code-runner
 resources:
   - namespace.yaml
   - config.yaml
-  # NOTE: secret.yaml is intentionally NOT listed here. It is gitignored (real creds), so it
-  # can't be GitOps-synced. Apply it once as a bootstrap step before Argo CD / kubectl apply:
-  #   kubectl apply -n code-runner -f k8s/secret.yaml   (copy from secret.example.yaml first)
   - mongo.yaml
   - rabbitmq.yaml
   - api-server.yaml
@@ -25,15 +22,15 @@ configMapGenerator:
       - seed.js
 
 generatorOptions:
-  disableNameSuffixHash: true   # keep the name `mongo-seed` stable (referenced by mongo.yaml)
+  disableNameSuffixHash: true   # keep the name 'mongo-seed' stable (referenced by mongo.yaml)
 
 # single source of truth for image versions. the Deployments reference images without a tag
 images:
   - name: gavro081/code-runner-api-server
-    newTag: "1.0.0"
+    newTag: "1.1.0"
   - name: gavro081/code-runner-gateway-service
-    newTag: "1.0.0"
+    newTag: "1.1.0"
   - name: gavro081/code-runner-code-execution-service
-    newTag: "1.0.0"
+    newTag: "1.1.0"
   - name: gavro081/code-runner-frontend
-    newTag: "1.0.0"
+    newTag: "1.1.0"
