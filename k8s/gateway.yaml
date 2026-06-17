@@ -1,5 +1,5 @@
-# Spring Cloud Gateway. The `docker` profile (application-docker.yml) routes /api/** ->
-# http://api-server:8080, which resolves to the api-server Service (DNS + load balancing)
+# Spring Cloud Gateway. The 'docker' profile (application-docker.yml) routes /api/** -> http://api-server:8080,
+# which resolves to the api-server Service (DNS + load balancing)
 apiVersion: v1
 kind: Service
 metadata:
@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: gateway-service
-          image: gavro081/code-runner-gateway-service   # tag set centrally in kustomization.yaml
+          image: gavro081/code-runner-gateway-service # tag set centrally in kustomization.yaml
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

@@ -21,18 +21,19 @@ helmCharts:
     namespace: code-runner
     valuesFile: mongodb-values.yaml
 
-# mongo seed ConfigMap, generated from k8s/seed.js (a copy of mongo-init/seed.js — kustomize
-# cannot reference files outside this directory). The chart mounts it at
-# /docker-entrypoint-initdb.d on the primary via initdbScriptsConfigMap: mongo-seed.
+# mongo seed ConfigMap, generated from k8s/seed.js (a copy of mongo-init/seed.js — kustomize cannot reference files outside this directory)
+# The chart mounts it at /docker-entrypoint-initdb.d on the primary via initdbScriptsConfigMap: mongo-seed
 configMapGenerator:
   - name: mongo-seed
     files:
       - seed.js
 
 generatorOptions:
-  disableNameSuffixHash: true   # keep the name 'mongo-seed' stable (referenced by the chart values)
+  disableNameSuffixHash: true # keep the name 'mongo-seed' stable (referenced by the chart values)
 
 # single source of truth for image versions. the Deployments reference images without a tag
+# command for changing all at once:
+# sed -i '' 's/newTag: "1.0.0"/newTag: "1.1.0"/g' k8s/kustomization.yaml
 images:
   - name: gavro081/code-runner-api-server
     newTag: "1.1.0"

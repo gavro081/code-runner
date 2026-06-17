@@ -1,4 +1,4 @@
-# nginx serving the Vite build. Reached via the Ingress at `/`.
+# nginx serving the Vite build. reached via the Ingress at `/`.
 apiVersion: v1
 kind: Service
 metadata:
@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: gavro081/code-runner-frontend   # tag set centrally in kustomization.yaml
+          image: gavro081/code-runner-frontend # tag set centrally in kustomization.yaml
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

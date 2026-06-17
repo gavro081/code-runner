@@ -1,4 +1,4 @@
-# pt 7 — single host, path-based routing (Traefik is k3d's built-in controller).
+# single host, path-based routing
 #   /api -> gateway-service:8080  (no rewrite; gateway predicate is Path=/api/**)
 #   /    -> frontend:80
 apiVersion: networking.k8s.io/v1

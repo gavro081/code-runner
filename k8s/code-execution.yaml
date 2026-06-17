@@ -26,7 +26,7 @@ spec:
             privileged: true
           env:
             - name: DOCKER_TLS_CERTDIR
-              value: ""          # disable TLS -> daemon listens on tcp://0.0.0.0:2375
+              value: "" # disable TLS -> daemon listens on tcp://0.0.0.0:2375
           readinessProbe:
             tcpSocket:
               port: 2375
@@ -37,7 +37,7 @@ spec:
               mountPath: /var/lib/docker
       containers:
         - name: code-execution-service
-          image: gavro081/code-runner-code-execution-service   # tag set centrally in kustomization.yaml
+          image: gavro081/code-runner-code-execution-service # tag set centrally in kustomization.yaml
           imagePullPolicy: IfNotPresent
           env:
             - name: DOCKER_HOST

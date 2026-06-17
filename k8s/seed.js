@@ -1,5 +1,5 @@
-// auto-generated from commands/code_execution_db.problems.json.
 // runs once on first MongoDB init (empty data volume) via /docker-entrypoint-initdb.d
+// fills database with sample problems
 db = db.getSiblingDB("code_execution_db");
 if (db.problems.countDocuments() === 0) {
   db.problems.insertMany([

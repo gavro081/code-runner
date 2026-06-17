@@ -1,5 +1,5 @@
-# 3 replicas behind one Service — the Service is the load balancer (replaces the old
-# Docker DNS round-robin). each pod keeps its own per-UUID RabbitMQ reply queue.
+# 3 replicas behind one Service — the Service is the load balancer (replaces the old Docker DNS round-robin)
+# each pod keeps its own per-UUID RabbitMQ reply queue.
 apiVersion: v1
 kind: Service
 metadata:
@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: api-server
-          image: gavro081/code-runner-api-server   # tag set centrally in kustomization.yaml
+          image: gavro081/code-runner-api-server # tag set centrally in kustomization.yaml
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

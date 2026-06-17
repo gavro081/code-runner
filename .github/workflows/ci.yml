@@ -37,7 +37,9 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
-
+      
+      # reactor (common + api-server): also installs 'common' to the local repo,
+      # which code-execution-service depends on below.
       - name: Build reactor (common + api-server)
         run: mvn -B -DskipTests install
 
@@ -57,6 +59,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # api-server & code-execution-service build from the repo root:
+          # their Dockerfiles need the 'common' module + root parent pom.
           - name: api-server
             context: .
             dockerfile: api-server/Dockerfile
@@ -65,6 +69,7 @@ jobs:
             context: .
             dockerfile: code-execution-service/Dockerfile
             build-args: ''
+          # gateway-service & frontend are self-contained: build from their own dirs.
           - name: gateway-service
             context: gateway-service
             dockerfile: gateway-service/Dockerfile
@@ -72,6 +77,7 @@ jobs:
           - name: frontend
             context: frontend
             dockerfile: frontend/Dockerfile
+            # empty -> relative "/api", proxied by nginx to the gateway
             build-args: VITE_API_BASE_URL=
     steps:
       - uses: actions/checkout@v4
@@ -117,5 +123,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build-args }}
+          # per-service layer cache so the four images don't evict each other
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.name }}
