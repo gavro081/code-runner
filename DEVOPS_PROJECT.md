@@ -258,10 +258,13 @@ Append dated entries as work happens so a future session sees exactly where thin
     (common + api-server, also installs `common` to the local repo), then `package` for the two standalone
     modules (gateway, code-execution-service). Spring `contextLoads` tests need live Mongo/RabbitMQ so they're
     skipped, same as the Dockerfiles. **Verified locally — all three steps pass on Java 17 / Maven 3.9.11.**
-  - **`build-images` job** (`needs: validate`) — a **matrix over the 4 services** builds + pushes in parallel
+  - **`build-images` job** (`needs: validate`) — a **matrix over the 4 services** runs in parallel
     via `docker/build-push-action`. Matches the Compose build topology: api-server & code-execution-service
     use the **repo-root** context, gateway & frontend their own dirs; frontend passes `VITE_API_BASE_URL=`
-    (empty → relative `/api`). Per-service GHA layer cache (`scope=<name>`).
+    (empty → relative `/api`). Per-service GHA layer cache (`scope=<name>`). **Push is ref-conditional**
+    (changed 2026-06-17, see log): on `v*` tags it does a full **multi-arch build & push**; on a plain `dev`
+    push it **builds only** (single-arch amd64, `push: false`, DockerHub login skipped) purely to verify the
+    Dockerfiles still build. (No `pull_request` trigger — CI fires on `dev` pushes + `v*` tags only.)
   - **Image names:** `gavro081/code-runner-<service>` (one DockerHub repo each). **Tags** via
     `docker/metadata-action`: branch (`dev`) + short-sha always; full/major.minor **semver** + `latest`
     (`flavor: latest=auto`) only on `v*` tag builds. The immutable sha/semver tags are deliberate so the
@@ -291,6 +294,19 @@ Append dated entries as work happens so a future session sees exactly where thin
     kustomization `images:` block (`kustomize edit set image …` to bump). CI now also `paths-ignore`s `k8s/**`
     so manifest-only changes don't rebuild images.
   - **Access:** `http://code-runner.localhost/` (macOS auto-resolves `*.localhost`; k3d maps host :80 → Traefik).
+- **2026-06-17** — **CI: made image build/push release-driven** (`.github/workflows/ci.yml`). Previously
+  every `dev` push *and* every `v*` tag built+pushed multi-arch images, so pushing a commit and its tag
+  together produced **two runs both doing the full heavy build** (the dev-push images were never consumed —
+  Argo CD deploys the tag pinned in the kustomization `images:` block, not a per-push sha). Now the
+  `build-images` job is **ref-conditional**: on `v*` tags it does the full multi-arch build & push (release
+  artifacts); on a plain `dev` push it **builds only** (single-arch amd64, `push: false`, DockerHub login
+  skipped) to verify the Dockerfiles still compile — something the `validate` job (`mvn package` only) never
+  checked.
+  Net: tags remain the single deployable source of truth; dev pushes get fast Docker-build feedback without
+  burning QEMU emulation or pushing dead images; the long emulated multi-arch build runs *only* on release.
+  Verified all four Dockerfiles build clean locally before the change. (The harmless "two runs on
+  simultaneous branch+tag push" is inherent to Git delivering two separate ref pushes — the dev one is now
+  just a cheap verify.)
 - **2026-06-16** — **CD bonus (Argo CD)** — pt 4 bonus complete. Installed Argo CD (`argocd` namespace) and
   registered `argocd/application.yaml`: an Argo `Application` tracking the **`dev`** branch → path `k8s/`
   (kustomize) → namespace `code-runner`, with **automated sync (prune + self-heal)** = true GitOps. Pushing a

@@ -48,7 +48,9 @@ jobs:
         run: mvn -B -DskipTests -f code-execution-service/pom.xml package
 
   build-images:
-    name: Build & push ${{ matrix.name }}
+    # on a plain dev push: build only (amd64, no push) to verify the Dockerfiles still build
+    # on v* tags: full multi-arch build and push of the release images
+    name: Build ${{ matrix.name }}
     needs: validate
     runs-on: ubuntu-latest
     strategy:
@@ -82,6 +84,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to DockerHub
+        # only needed when we actually push (release tags)
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -105,9 +109,11 @@ jobs:
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
-          push: true
-          # multi-arch so images pull on both amd64 (CI/cloud) and arm64 (local Apple Silicon k3d)
-          platforms: linux/amd64,linux/arm64
+          # push only on release tags; plain dev pushes just verify the image compiles
+          push: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          # multi-arch (amd64 CI/cloud + arm64 local Apple Silicon k3d) only on release tags;
+          # plain dev pushes stay single-arch to skip the slow QEMU arm64 emulation
+          platforms: ${{ startsWith(github.ref, 'refs/tags/v') && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build-args }}
