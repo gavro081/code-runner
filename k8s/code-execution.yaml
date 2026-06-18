@@ -27,6 +27,17 @@ spec:
           env:
             - name: DOCKER_TLS_CERTDIR
               value: "" # disable TLS -> daemon listens on tcp://0.0.0.0:2375
+          # for a native sidecar, the main container waits on the sidecar's startupProbe
+          # (NOT its readinessProbe). without this, the exec container's one-shot
+          # ensureSandboxImages() races dockerd's socket and fails with "Connection refused",
+          # leaving the sandbox images unbuilt -> submissions fail with "No such image".
+          startupProbe:
+            tcpSocket:
+              port: 2375
+            initialDelaySeconds: 2
+            periodSeconds: 2
+            failureThreshold: 30 # allow up to ~60s for dockerd to come up
+            
           readinessProbe:
             tcpSocket:
               port: 2375
