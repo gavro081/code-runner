@@ -1,0 +1,80 @@
+# one-shot Job that turns the 3 standalone mongod pods into the rs0 replica set
+# and seeds the problems collection. idempotent and safe to re-run
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongo-rs-init
+  labels:
+    app: mongo-rs-init
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        app: mongo-rs-init
+    spec:
+      restartPolicy: OnFailure
+      volumes:
+        - name: seed
+          configMap:
+            name: mongo-seed
+      containers:
+        - name: init
+          image: mongo:7.0
+          env:
+            - name: MONGO_PW
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: mongodb-root-password
+          volumeMounts:
+            - name: seed
+              mountPath: /seed
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              NS=code-runner
+              H0="mongo-0.mongo-headless.${NS}.svc.cluster.local:27017"
+              H1="mongo-1.mongo-headless.${NS}.svc.cluster.local:27017"
+              H2="mongo-2.mongo-headless.${NS}.svc.cluster.local:27017"
+
+              echo "==> waiting for mongo-0 to accept authenticated connections"
+              until mongosh --quiet --host "$H0" -u root -p "$MONGO_PW" --authenticationDatabase admin \
+                    --eval 'db.adminCommand("ping")' >/dev/null 2>&1; do
+                echo "    ...mongo-0 not ready yet"; sleep 5
+              done
+
+              echo "==> initiating replica set rs0 (idempotent)"
+              mongosh --quiet --host "$H0" -u root -p "$MONGO_PW" --authenticationDatabase admin --eval "
+                try {
+                  rs.status();
+                  print('replica set already initiated, skipping');
+                } catch (e) {
+                  print('initiating rs0');
+                  rs.initiate({
+                    _id: 'rs0',
+                    members: [
+                      { _id: 0, host: '${H0}', priority: 2 },
+                      { _id: 1, host: '${H1}', priority: 1 },
+                      { _id: 2, host: '${H2}', priority: 1 }
+                    ]
+                  });
+                }
+              "
+
+              echo "==> waiting for a primary to be elected"
+              until mongosh --quiet --host "$H0" -u root -p "$MONGO_PW" --authenticationDatabase admin \
+                    --eval 'quit(db.hello().isWritablePrimary ? 0 : 1)'; do
+                echo "    ...no primary yet"; sleep 5
+              done
+
+              echo "==> seeding problems via the primary"
+              mongosh --quiet "mongodb://root:${MONGO_PW}@${H0},${H1},${H2}/?replicaSet=rs0&authSource=admin" /seed/seed.js
+
+              echo "==> replica set members:"
+              mongosh --quiet --host "$H0" -u root -p "$MONGO_PW" --authenticationDatabase admin \
+                --eval 'rs.status().members.forEach(m => print("    " + m.name + " -> " + m.stateStr))'
+              echo "==> done"

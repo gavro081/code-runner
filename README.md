@@ -94,7 +94,7 @@ cp k8s/secret.example.yaml k8s/secret.yaml
 
 1. (re)creates a k3d cluster with Traefik published on localhost `:80`/`:443`
 2. creates the `code-runner` namespace and applies the bootstrap secret out-of-band
-3. installs Argo CD into the `argocd` namespace and enables Helm support in its kustomize build (for the Bitnami MongoDB chart)
+3. installs Argo CD into the `argocd` namespace
 4. registers the Argo CD `Application`, which deploys the app from the `k8s/` path of the **`dev` branch on GitHub** (true GitOps, not your local working tree)
 5. waits for the application to become Synced + Healthy, then prints access info
 
@@ -104,7 +104,7 @@ Inside the `code-runner` namespace (see the diagram above):
 
 - A Traefik **Ingress** on `code-runner.localhost` routes `/api` to the gateway Service and `/` to the frontend Service
 - The **api-server** Service load-balances 3 Deployment replicas (replacing the Compose DNS round-robin)
-- MongoDB runs as a **3-member replica set** (Bitnami Helm chart, rendered into a StatefulSet with a PVC per replica)
+- MongoDB runs as an explicit **3-member replica set** (`rs0`): a StatefulSet with a PVC per replica, with the `mongo-rs-init` Job running `rs.initiate()` and seeding the problems
 - The **code-execution-service** runs a privileged `docker:dind` native sidecar and talks to it via `DOCKER_HOST=tcp://localhost:2375`, so sandbox containers run inside dind instead of needing the host socket
 
 When the script finishes, open [http://code-runner.localhost/](http://code-runner.localhost/). On macOS `*.localhost` resolves automatically; on Linux add `127.0.0.1 code-runner.localhost` to `/etc/hosts`.
@@ -135,7 +135,7 @@ common/                            # Shared models, events, and RabbitMQ config
 frontend/                          # React + Vite + CodeMirror + Tailwind CSS (nginx for prod)
 mongo-init/                        # MongoDB seed script (Compose)
 docker-compose.yml                 # Full stack for local Docker Compose
-k8s/                               # Kubernetes manifests (kustomize + Bitnami MongoDB chart)
+k8s/                               # Kubernetes manifests (kustomize; explicit MongoDB replica set)
 argocd/                            # Argo CD Application (GitOps)
 .github/workflows/                 # CI pipeline (ci.yml)
 commands/                          # bootstrap.sh + a useful-commands reference

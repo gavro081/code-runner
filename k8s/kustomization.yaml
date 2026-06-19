@@ -7,22 +7,16 @@ resources:
   - namespace.yaml
   - config.yaml
   - rabbitmq.yaml
+  - mongodb.yaml
+  - mongodb-init-job.yaml
   - api-server.yaml
   - gateway.yaml
   - code-execution.yaml
   - frontend.yaml
   - ingress.yaml
 
-helmCharts:
-  - name: mongodb
-    repo: oci://registry-1.docker.io/bitnamicharts
-    version: 19.1.10  
-    releaseName: mongo
-    namespace: code-runner
-    valuesFile: mongodb-values.yaml
-
 # mongo seed ConfigMap, generated from k8s/seed.js (a copy of mongo-init/seed.js — kustomize cannot reference files outside this directory)
-# The chart mounts it at /docker-entrypoint-initdb.d on the primary via initdbScriptsConfigMap: mongo-seed
+# The mongo-rs-init Job mounts it at /seed and runs it against the primary after rs.initiate.
 configMapGenerator:
   - name: mongo-seed
     files:
