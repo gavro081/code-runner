@@ -23,7 +23,7 @@ configMapGenerator:
       - seed.js
 
 generatorOptions:
-  disableNameSuffixHash: true # keep the name 'mongo-seed' stable (referenced by the chart values)
+  disableNameSuffixHash: true # keep the name 'mongo-seed' stable
 
 # single source of truth for image versions. the Deployments reference images without a tag
 # command for changing all at once:
