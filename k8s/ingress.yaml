@@ -1,6 +1,9 @@
-# single host, path-based routing
+# path-based routing, host-agnostic so the SAME manifest works locally and in the cloud:
 #   /api -> gateway-service:8080  (no rewrite; gateway predicate is Path=/api/**)
 #   /    -> frontend:80
+# no `host:` -> Traefik matches on path for ANY Host header. locally still answers on code-runner.localhost; 
+# in the cloud it answers on the node's public IP (or <IP>.sslip.io)
+# frontend calls a relative /api, so nothing is host-bound.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -8,8 +11,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: code-runner.localhost
-      http:
+    - http:
         paths:
           - path: /api
             pathType: Prefix
