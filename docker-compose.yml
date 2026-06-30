@@ -5,10 +5,10 @@ services:
     # --quiet suppresses the per-connection accepted/ended log lines that mongosh would flood the logs with
     command: ["mongod", "--quiet"]
     environment:
-      - MONGO_INITDB_DATABASE=code_execution_db
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
     ports:
       # 27018 on host to avoid clashing with local mongod on 27017; reachable on 27017 internally
-      - "27018:27017"
+      - "${MONGO_HOST_PORT}:27017"
     volumes:
       - mongo-data:/data/db
       # seed runs once on first init (empty volume)
@@ -25,11 +25,11 @@ services:
     container_name: rabbitmq
     hostname: rabbitmq
     ports:
-      - "5672:5672"   # AMQP for the spring services
-      - "15672:15672" # management web UI
+      - "${RABBITMQ_AMQP_PORT}:5672"   # AMQP for the spring services
+      - "${RABBITMQ_MGMT_PORT}:15672" # management web UI
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s
@@ -43,20 +43,20 @@ services:
       dockerfile: api-server/Dockerfile
     image: code-runner/api-server:latest
     environment:
-      - SERVER_PORT=8080
+      - SERVER_PORT=${API_SERVER_PORT}
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=guest
-      - SPRING_RABBITMQ_PASSWORD=guest
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/code_execution_db
-      - SPRING_DATA_MONGODB_DATABASE=code_execution_db
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASS}
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/${MONGO_DATABASE}
+      - SPRING_DATA_MONGODB_DATABASE=${MONGO_DATABASE}
     depends_on:
       mongo:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
     deploy:
-      replicas: 3
+      replicas: ${API_SERVER_REPLICAS}
 
   gateway-service:
     build:
@@ -67,7 +67,7 @@ services:
       # routes /api/** directly to the api-server service (Docker DNS round-robins replicas)
       - SPRING_PROFILES_ACTIVE=docker
     ports:
-      - "8080:8080"
+      - "${GATEWAY_HOST_PORT}:8080"
     depends_on:
       - api-server
 
@@ -79,10 +79,10 @@ services:
     environment:
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=guest
-      - SPRING_RABBITMQ_PASSWORD=guest
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/code_execution_db
-      - SPRING_DATA_MONGODB_DATABASE=code_execution_db
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASS}
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/${MONGO_DATABASE}
+      - SPRING_DATA_MONGODB_DATABASE=${MONGO_DATABASE}
     volumes:
       # the service launches sandbox containers on the host daemon via this socket,
       # and builds the python/js sandbox images here on startup if they are missing.
@@ -102,7 +102,7 @@ services:
         VITE_API_BASE_URL: ""
     image: code-runner/frontend:latest
     ports:
-      - "5173:80"
+      - "${FRONTEND_HOST_PORT}:80"
     depends_on:
       - gateway-service
 
